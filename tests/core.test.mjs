@@ -114,7 +114,7 @@ test('seed content', () => {
   for (const l of LESSONS) assert.ok(l.items.length >= 4 && l.tip && l.titleVi, l.id);
   assert.ok(VOCAB.length >= 50);
   assert.equal(new Set(VOCAB.map((v) => v.w)).size, VOCAB.length);
-  assert.equal(SCENARIOS.length, 6);
+  assert.equal(SCENARIOS.length, 9);
 });
 
 test('free talk gives exactly one thing to practice, never scores', async () => {
