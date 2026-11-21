@@ -1,5 +1,6 @@
 // App state and persistence (localStorage). Views mutate the state through these helpers, then call app.save().
 import { dayKey, addDays, bumpStreak } from './days.js';
+import { migrateMyVoice } from './takes.js';
 
 const KEY = 'siri-speaking:v1';
 const MAX_HISTORY = 200;
@@ -7,15 +8,15 @@ const MAX_HISTORY = 200;
 export const defaultState = () => ({
   v: 1,
   profile: null, // { name, focus: 'daily'|'work'|'both', accent: 'en-US'|'en-GB' }
-  settings: { rate: 0.9, gender: 'female', voiceName: null, useMyVoice: false, transcribe: 'auto', showVi: true },
+  settings: { rate: 1, gender: 'female', voiceName: null, useTakes: false, transcribe: 'auto', showVi: true }, // rate: playback speed, 0.8 or 1
   streak: { count: 0, last: null, best: 0 },
   done: {}, // day → { kind: count }  (kind: talk | drill | shadow | deck | voice | free)
   lessons: {}, // lesson id → { plays, best (% of words heard) | null, done }
   scenarios: {}, // scenario id → { days: [day…] }  — distinct days played, drives the daily twist
   deck: [], // retry deck: { id, en, vi, tip, audio (IndexedDB key) | null, added, due, wins }
   voice: null, // weekly voice comparison: { line, first: { day, audio }, history: [{ line, from, to }] }
-  myVoice: null, // the learner's own recordings as a model voice: { name, sample (audio key) | null, clips: { sentence → audio key }, lines: { sentence → { t, vi } } }
-  voicePack: null, // id of the bundled voice pack already added to myVoice (never added twice, so a deleted voice stays deleted)
+  takes: {}, // the learner's saved takes: line key → { audio (IndexedDB key), sec, day, text (snapshot of the line), mime }
+  voicePack: null, // id of the bundled recordings already added to the takes (never added twice, so a deleted take stays deleted)
   sounds: {}, // hint id → times the browser heard a word differently
   today: null, // { day, tasks: [{kind, id}] }
   history: [], // newest first: { t, day, kind, target, pct | null }
@@ -30,7 +31,9 @@ export function load() {
     const s = JSON.parse(storage?.getItem(KEY) || 'null');
     if (!s || typeof s !== 'object') return defaultState();
     const d = defaultState();
-    return { ...d, ...s, settings: { ...d.settings, ...s.settings }, streak: { ...d.streak, ...s.streak } };
+    const out = { ...d, ...s, settings: { ...d.settings, ...s.settings }, streak: { ...d.streak, ...s.streak } };
+    out.settings.rate = out.settings.rate < 0.85 ? 0.8 : 1; // earlier versions had three speeds
+    return migrateMyVoice(out);
   } catch { return defaultState(); }
 }
 export function save(state) { try { storage?.setItem(KEY, JSON.stringify(state)); } catch { /* quota or private mode */ } }

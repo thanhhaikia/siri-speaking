@@ -31,6 +31,11 @@ const CONTRACTIONS = {
   "wouldn't": 'would not', "shouldn't": 'should not', "haven't": 'have not', "hasn't": 'has not', "hadn't": 'had not', "mustn't": 'must not',
   "o'clock": 'oclock', "name's": 'name is',
 };
+// 'd and 's are ambiguous ("I'd" = I would / I had, "he's" = he is / he has): the second reading is tried too.
+const CONTRACTIONS_ALT = Object.fromEntries(Object.entries(CONTRACTIONS)
+  .filter(([k, v]) => (k.endsWith("'d") && v.endsWith(' would')) || (k.endsWith("'s") && v.endsWith(' is')))
+  .map(([k, v]) => [k, v.replace(/ would$/, ' had').replace(/ is$/, ' has')]));
+const AMBIGUOUS = new RegExp(`(^|[^a-z])(${Object.keys(CONTRACTIONS_ALT).join('|')})(?![a-z])`, 'i');
 
 // British ↔ American spellings and written forms the recogniser may output differently.
 const VARIANTS = {
@@ -39,6 +44,8 @@ const VARIANTS = {
   programme: 'program', metres: 'meters', metre: 'meter', ok: 'okay', mr: 'mister', mrs: 'missus', dr: 'doctor', wifi: 'wi fi', tv: 't v',
   email: 'e mail', percent: 'percent', '%': 'percent', cheque: 'check',
 };
+
+const oneWord = (w) => (VARIANTS[w] && !VARIANTS[w].includes(' ') ? VARIANTS[w] : null);
 
 // Words a speech recogniser cannot tell apart; saying one counts as saying the other.
 const HOMOPHONES = [
@@ -57,8 +64,8 @@ const FILLERS = new Set(['uh', 'um', 'er', 'erm', 'ah', 'hmm', 'mm', 'uhm', 'eh'
 export const isFiller = (w) => FILLERS.has(w);
 
 /** Normalise one whitespace-separated chunk into comparison tokens. */
-export function normChunk(chunk) {
-  let s = String(chunk).toLowerCase().replace(/[’‘`´]/g, "'");
+export function normChunk(chunk, alt = false) {
+  let s = String(chunk).toLowerCase().replace(/[’‘`´]/g, "'").normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // café → cafe
   s = s.replace(/\$(\d+)/g, '$1 dollars').replace(/(\d)%/g, '$1 percent').replace(/%/g, ' percent');
   s = s.replace(/(\d{1,2}):00\b/g, '$1 oclock').replace(/(\d{1,2}):(\d{2})/g, '$1 $2');
   s = s.replace(/\b(\d+)(st|nd|rd|th)\b/g, (_, n) => ordinalWords(+n));
@@ -77,24 +84,24 @@ export function normChunk(chunk) {
       out.push(...numberToWords(+d).split(' '), rest);
       continue;
     }
-    const expanded = CONTRACTIONS[part] || VARIANTS[part] || part;
-    for (const w of expanded.split(' ')) out.push(VARIANTS[w] && !VARIANTS[w].includes(' ') ? VARIANTS[w] : w);
+    const expanded = (alt && CONTRACTIONS_ALT[part]) || CONTRACTIONS[part] || VARIANTS[part] || part;
+    for (const w of expanded.split(' ')) out.push(oneWord(w) || (w.endsWith('s') && oneWord(w.slice(0, -1)) ? `${oneWord(w.slice(0, -1))}s` : w)); // neighbours → neighbors
   }
   return out;
 }
 
 /** Full text → flat list of normalised tokens. */
-export function normalizeTokens(text) {
-  return String(text || '').split(/\s+/).flatMap(normChunk);
+export function normalizeTokens(text, alt = false) {
+  return String(text || '').split(/\s+/).flatMap((c) => normChunk(c, alt));
 }
 export const normalizeText = (text) => normalizeTokens(text).join(' ');
 
 /** Target text → display tokens, each with its normalised sub-tokens. */
-export function tokenizeTarget(text) {
+export function tokenizeTarget(text, alt = false) {
   return String(text || '')
     .split(/\s+/)
     .filter(Boolean)
-    .map((display) => ({ display, norms: normChunk(display) }))
+    .map((display) => ({ display, norms: normChunk(display, alt) }))
     .filter((t) => t.norms.length);
 }
 
@@ -163,12 +170,21 @@ export function alignTokens(target, heard) {
 
 const WORD_VALUE = { correct: 1, close: 0.5, wrong: 0, missing: 0 };
 
-/** Compare the target with one recognised transcript. */
+/** Compare the target with one recognised transcript. An ambiguous contraction on either side is read both ways and the closer reading kept. */
 export function compareText(targetText, heardText) {
-  const words = tokenizeTarget(targetText);
+  const sides = (text) => (AMBIGUOUS.test(String(text || '').replace(/[’‘`´]/g, "'")) ? [false, true] : [false]);
+  let best = null;
+  for (const ta of sides(targetText)) for (const ha of sides(heardText)) {
+    const c = compareOnce(targetText, heardText, ta, ha);
+    if (!best || c.accuracy > best.accuracy) best = c;
+  }
+  return best;
+}
+function compareOnce(targetText, heardText, targetAlt, heardAlt) {
+  const words = tokenizeTarget(targetText, targetAlt);
   const flat = [];
   words.forEach((w, wi) => w.norms.forEach((t) => flat.push({ t, wi })));
-  const heard = normalizeTokens(heardText);
+  const heard = normalizeTokens(heardText, heardAlt);
   const { tokens, extras } = alignTokens(flat.map((x) => x.t), heard);
   const parts = words.map(() => []);
   flat.forEach((x, k) => parts[x.wi].push(tokens[k]));

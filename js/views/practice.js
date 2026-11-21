@@ -12,7 +12,7 @@ export default function practice(root, app) {
     const extra = extraLines(app.state).length;
     root.innerHTML = `<h1>Practice${vi('Luyện tập')}</h1>
       <a class="card task" href="#/shadow" style="margin-top:14px"><span class="ic">🎧</span><span class="body"><b>Shadowing</b>${vi('Nghe giọng mẫu rồi nhại lại ngay 5 câu ngắn')}</span><span class="badge">3 min</span></a>
-      ${extra ? `<a class="card task" href="#/shadow/mine"><span class="ic">🎙</span><span class="body"><b>Shadow ${esc(app.state.myVoice.name)}</b>${vi('Nghe lại chính bản ghi âm của bạn rồi nhại theo từng câu')}</span><span class="badge">${extra} lines</span></a>` : ''}
+      ${extra ? `<a class="card task" href="#/shadow/mine"><span class="ic">🎙</span><span class="body"><b>Shadow my own sentences</b>${vi('Nghe lại chính bản ghi âm của bạn rồi nhại theo từng câu')}</span><span class="badge">${extra} lines</span></a>` : ''}
       <a class="card task" href="#/free"><span class="ic">🗣️</span><span class="body"><b>Free talk</b>${vi('Nói tự do 30–60 giây: xem máy nghe được gì và một điều nên luyện')}</span><span class="badge">1 min</span></a>
       <h2>Sound drills${vi('Luyện các âm người Việt hay gặp khó')}</h2>
       <div class="chips"><button class="chip ${topic === 'all' ? 'on' : ''}" data-topic="all">All</button>${LESSON_TOPICS.map((tp) => `<button class="chip ${topic === tp.id ? 'on' : ''}" data-topic="${tp.id}">${esc(tp.en)}</button>`).join('')}</div>

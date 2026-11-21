@@ -27,8 +27,8 @@ export default function home(root, app) {
     ${tasks.map((t) => `<a class="card task ${t.done ? 'done' : ''}" href="${t.href}"><span class="ic">${t.done ? '✅' : t.icon}</span>
       <span class="body"><b>${esc(t.en)}</b>${vi(t.vi)}</span><span class="badge ${t.done ? 'ok' : ''}">${t.done ? 'Done' : `${t.min} min`}</span></a>`).join('')}
     <h2>In your own voice${vi('Bằng giọng của chính bạn')}</h2>
-    <a class="card task" href="#/myvoice"><span class="ic">🎙</span><span class="body"><b>Record my voice for the lessons</b>${vi('Đọc từng câu một lần để nút Listen phát giọng của bạn ở câu đó')}</span><span class="badge">${voice.done} / ${voice.total}</span></a>
-    ${extra ? `<a class="card task" href="#/shadow/mine"><span class="ic">🎧</span><span class="body"><b>Shadow ${esc(state.myVoice.name)}</b>${vi('Nút Listen phát đúng bản ghi âm của bạn cho từng câu, rồi bạn nhại theo')}</span><span class="badge">${extra} lines</span></a>` : ''}
+    <a class="card task" href="#/myvoice"><span class="ic">🎙</span><span class="body"><b>My saved takes</b>${vi('Nghe lại, thu thêm hoặc xóa các bản ghi âm của chính bạn cho từng câu')}</span><span class="badge">Recorded: ${voice.done} / ${voice.total}</span></a>
+    ${extra ? `<a class="card task" href="#/shadow/mine"><span class="ic">🎧</span><span class="body"><b>Shadow my own sentences</b>${vi('Nghe lại chính bản ghi âm của bạn cho từng câu, rồi nhại theo')}</span><span class="badge">${extra} lines</span></a>` : ''}
     <h2>This week${vi('Tuần này')}</h2>
     <div class="card"><div class="week">${week.map((d) => `<div class="${state.done[d] ? 'on' : ''} ${d === today ? 'today' : ''}"><i></i>${new Date(d + 'T12:00').toLocaleDateString('en', { weekday: 'short' })}</div>`).join('')}</div></div>
     <h2>Tip of the day${vi('Mẹo hôm nay')}</h2>

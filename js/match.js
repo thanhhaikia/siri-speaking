@@ -44,16 +44,18 @@ const hasGroup = (tokens, group) => group.every((g) => {
 });
 
 /**
- * Open replies in a conversation: the task is done when the reply contains any accepted idea
- * (a list of words/phrases that must all appear). "Two, please" and "A table for two" both pass.
- * Returns null when there is no transcript to check.
+ * Soft keyword hints for a free answer in a conversation. The browser's transcript cannot judge meaning, so this
+ * never says right or wrong: it only reports which of the turn's key words (each a list of words that go together)
+ * the browser heard. Returns null when there is no transcript.
  */
-export function replyDone(accept, alternatives) {
+export function keywordHints(keywords, alternatives) {
   const alts = (alternatives || []).filter((a) => a && a.trim());
   if (!alts.length) return null;
+  let best = null;
   for (const alt of alts) {
     const tokens = normalizeTokens(alt);
-    if (accept.some((group) => hasGroup(tokens, group))) return { done: true, transcript: alt };
+    const heard = keywords.filter((group) => hasGroup(tokens, group)).map((group) => group.join(' '));
+    if (!best || heard.length > best.heard.length) best = { transcript: alt, heard };
   }
-  return { done: false, transcript: alts[0] };
+  return { ...best, examples: keywords.slice(0, 2).map((group) => group.join(' ')) };
 }

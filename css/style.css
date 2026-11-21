@@ -203,3 +203,11 @@ input[type=text]:focus, select:focus { outline: 3px solid var(--blue-l); border-
   .modal { border-radius: 24px; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+.check { display: flex; gap: 10px; align-items: flex-start; margin: 12px 0; font-size: .95rem; }
+.check input { width: 20px; height: 20px; margin-top: 2px; flex: none; }
+.dialogue .bubble { font-size: .98rem; margin-bottom: 8px; }
+.dialogue .bubble.on { outline: 3px solid var(--amber, #f59e0b); outline-offset: 2px; }
+.bubble.me .badge { background: #fff; }
+details.full { margin-top: 14px; }
+details.full > summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
+.take-row .row { margin-top: 8px; }

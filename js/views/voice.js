@@ -17,7 +17,7 @@ export default function voice(root, app, [mode]) {
   const stage = status.stage === 'wait' && mode === 'now' ? 'compare' : status.stage;
   let part = null, take = null;
   const head = `${topBar(stage === 'record' ? 0 : stage === 'wait' ? 50 : 90, '#/me')}<h1>Weekly voice check${vi('So sánh giọng nói hằng tuần')}</h1>`;
-  const lineCard = `<div class="card" style="margin:14px 0"><div class="target" style="font-size:1.4rem">${esc(line.t)}</div>${vi(line.vi)}<div class="row center" style="margin-top:8px"><button class="btn sm ghost" data-model>🔊 Listen</button></div></div>`;
+  const lineCard = `<div class="card" style="margin:14px 0"><div class="target" style="font-size:1.4rem">${esc(line.t)}</div>${vi(line.vi)}<div class="row center" style="margin-top:8px"><button class="btn sm ghost" data-model>🔊 Listen (Coach)</button></div></div>`;
 
   if (stage === 'wait') {
     root.innerHTML = `${head}<p class="muted">Recorded on ${fmtDate(new Date(v.first.day + 'T12:00'))}. Say the same line again in ${status.daysLeft} day${status.daysLeft === 1 ? '' : 's'} and hear the difference.${vi(`Bạn đã ghi âm. ${status.daysLeft} ngày nữa hãy nói lại câu này để nghe sự khác biệt.`)}</p>

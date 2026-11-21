@@ -1,19 +1,20 @@
 // The record button used everywhere. Recording (MediaRecorder) is the primary input; transcription
 // (SpeechRecognition) runs alongside only when enabled, and a typed answer covers "no microphone".
-import { startRecording, tooQuiet } from '../recorder.js';
-import { listen, srError } from '../speech.js';
+import { startRecording, tooQuiet, stopAudio } from '../recorder.js';
+import { listen, srError, stopSpeaking } from '../speech.js';
 import { $, $$, esc, vi } from '../ui.js';
 
 const MIC = '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
 const STOP = '<svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/></svg>';
-const BARS = 26;
+const BARS = 26, MIN_MS = 400;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /**
  * @param {HTMLElement} host
  * @param {{maxSec?: number, autoStop?: boolean, onStart?: () => void, onTick?: (sec: number) => void,
- *   onResult: (r: {blob: Blob|null, stats: object|null, quiet: boolean, alternatives: string[]|null, typed: boolean, note: object|null}) => void}} opts
- *   alternatives is null when nothing was transcribed.
+ *   onResult: (r: {blob: Blob|null, stats: object|null, sec: number, quiet: boolean, alternatives: string[]|null, typed: boolean, note: object|null, failed?: boolean}) => void}} opts
+ *   alternatives is null when nothing was transcribed; sec is the length of the recording;
+ *   failed means transcription was tried and the service did not answer (the recording is still returned).
  */
 export function speakBox(host, app, { maxSec = 12, autoStop = true, onStart, onTick, onResult }) {
   let phase = 'idle', recorder = null, sr = null, srDone = null, timer = null, ticker = null, levels = [], alive = true, t0 = 0;
@@ -43,6 +44,9 @@ export function speakBox(host, app, { maxSec = 12, autoStop = true, onStart, onT
   async function start() {
     if (phase !== 'idle') return;
     phase = 'busy'; show();
+    // The model voice must not play into the microphone.
+    stopSpeaking();
+    stopAudio();
     interim.textContent = '';
     levels = [];
     let micError = null;
@@ -67,8 +71,17 @@ export function speakBox(host, app, { maxSec = 12, autoStop = true, onStart, onT
     if (phase !== 'rec') return;
     phase = 'busy'; show();
     clearTimeout(timer); clearInterval(ticker);
+    const ms = Date.now() - t0, sec = Math.max(1, Math.round(ms / 1000));
     sr?.stop();
     const audio = recorder ? await recorder.stop() : { blob: null, stats: null };
+    // An accidental tap: nothing to check, and a blank take must never replace a saved one.
+    if (ms < MIN_MS || (audio.blob && audio.blob.size === 0)) {
+      recorder = sr = srDone = null;
+      if (!alive) return;
+      phase = 'idle'; show();
+      interim.innerHTML = `That was too short to record. Tap, speak, then tap again.${vi('Bản ghi quá ngắn. Hãy chạm, nói, rồi chạm lần nữa để dừng.')}`;
+      return;
+    }
     const res = srDone ? await Promise.race([srDone, sleep(3000).then(() => ({ err: new Error('timeout') }))]) : null;
     recorder = sr = srDone = null;
     if (!alive) return;
@@ -77,7 +90,7 @@ export function speakBox(host, app, { maxSec = 12, autoStop = true, onStart, onT
     const note = res?.err && res.err.message !== 'timeout' ? srError(res.err) : null;
     phase = 'idle'; show();
     interim.textContent = '';
-    onResult({ ...audio, quiet, alternatives, typed: false, note });
+    onResult({ ...audio, sec, quiet, alternatives, typed: false, note, failed: !!res?.err });
   }
 
   function fail(err) {
@@ -101,7 +114,7 @@ export function speakBox(host, app, { maxSec = 12, autoStop = true, onStart, onT
     if (!text || phase !== 'idle') return;
     input.value = '';
     interim.textContent = '';
-    onResult({ blob: null, stats: null, quiet: false, alternatives: [text], typed: true, note: null });
+    onResult({ blob: null, stats: null, sec: 0, quiet: false, alternatives: [text], typed: true, note: null });
   });
   show();
 

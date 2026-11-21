@@ -1,4 +1,4 @@
-// Sound drills (#/drill/:lessonId) and shadowing (#/shadow, or #/shadow/mine for the learner's own recordings): a run of exact-repeat lines.
+// Sound drills (#/drill/:lessonId) and shadowing (#/shadow, or #/shadow/mine for the learner's own recorded sentences): a run of exact-repeat lines.
 import { lessonById } from '../content/lessons.js';
 import { shadowSet } from '../plan.js';
 import { extraLines } from '../voicescript.js';
@@ -13,7 +13,7 @@ export default function lines(root, app, [id], route) {
   const mine = shadow && id === 'mine';
   const items = mine ? extraLines(app.state) : shadow ? shadowSet() : lesson.items;
   if (!items.length) return app.go('#/practice');
-  const title = mine ? `Shadow ${app.state.myVoice.name}` : shadow ? 'Shadowing' : lesson.title;
+  const title = mine ? 'Shadow my own sentences' : shadow ? 'Shadowing' : lesson.title;
   const pcts = items.map(() => null);
   let i = 0, part = null;
 

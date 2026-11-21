@@ -1,10 +1,10 @@
 // Hash router and the app context shared by all views.
 import { load, save } from './store.js';
 import { speak, stopSpeaking, srSupported, onVoicesChanged } from './speech.js';
-import { isMobile, stopAudio, playAudio } from './recorder.js';
-import { loadAudio, saveAudio, deleteAudio } from './audiodb.js';
-import { clipFor, addPack } from './myvoice.js';
-import { openVoicePicker, showVoiceName, browserVoiceName } from './views/voicepicker.js';
+import { isMobile, stopAudio } from './recorder.js';
+import { saveAudio, deleteAudio } from './audiodb.js';
+import { addPack } from './takes.js';
+import { openVoicePicker, showVoiceName } from './views/voicepicker.js';
 import { $, $$, toast } from './ui.js';
 
 const routes = {
@@ -13,27 +13,15 @@ const routes = {
   free: ['free', null], deck: ['deck', 'deck'], voice: ['voice', null], myvoice: ['myvoice', null], me: ['profile', 'me'],
 };
 
-let sayTurn = 0, noted = false; // noted: the "no recording yet" message is shown once per screen
-
 export const app = {
   state: load(),
   save() { save(app.state); },
   go(hash) { if (location.hash === hash) render(); else location.hash = hash; },
   lang: () => app.state.profile?.accent || 'en-US',
-  /** Play the model voice: the learner's own recording of this sentence when "My voice" is on (or `own` asks for it) and has one, else the browser voice. */
-  async say(text, { slow = false, own = false } = {}) {
-    const s = app.state.settings, turn = ++sayTurn;
+  /** "Listen (Coach)": always the chosen coach voice, at the chosen speed. It never plays one of the learner's recordings. */
+  say(text, { slow = false } = {}) {
+    const s = app.state.settings;
     stopAudio();
-    stopSpeaking();
-    if ((s.useMyVoice || own) && app.state.myVoice && !slow) {
-      const blob = await loadAudio(clipFor(app.state, text));
-      if (turn !== sayTurn) return false;
-      if (blob) { if (await playAudio(blob)) return true; } else if (!noted && !$('[data-voice-note]')) {
-        noted = true;
-        toast(`No recording of this sentence in ${app.state.myVoice.name} yet, so you hear ${browserVoiceName(app)}.`, 4000);
-      }
-      if (turn !== sayTurn) return false;
-    }
     return speak(text, { accent: app.lang(), gender: s.gender, rate: slow ? 0.6 : s.rate, voiceName: s.voiceName });
   },
   /** Should attempts also be transcribed? Optional: recording and replay work without it. */
@@ -50,8 +38,6 @@ async function render() {
   const [file, tab] = routes[name] || routes[''];
   cleanup?.();
   cleanup = null;
-  sayTurn++;
-  noted = false;
   stopSpeaking();
   stopAudio();
   $('.modal-x')?.click();
@@ -68,12 +54,17 @@ async function render() {
   window.scrollTo(0, 0);
 }
 
-document.addEventListener('click', (e) => { const b = e.target.closest('[data-voice]'); if (b) openVoicePicker(app, b.dataset.voice === 'upload'); });
+document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-voice]')) return openVoicePicker(app);
+  // "Practice without word matching": offered when the browser's transcription failed. Recording and replay go on without it.
+  const off = e.target.closest('[data-nomatch]');
+  if (off) { app.state.settings.transcribe = 'off'; app.save(); off.disabled = true; toast('Word matching is off. Recording and replay still work. Turn it back on in Profile.', 4000); }
+});
 onVoicesChanged(() => showVoiceName(app));
 window.addEventListener('hashchange', render);
 render();
 
-// A voice pack shipped with the app (audio/my-voice/) is added to "My voice" on the first visit.
+// Recordings shipped with the app (audio/my-voice/) are added to the learner's saved takes on the first visit.
 (async () => {
   try {
     const dir = 'audio/my-voice/', res = await fetch(`${dir}index.json`);
@@ -83,6 +74,6 @@ render();
     if (app.state.voicePack === pack.id) return;
     (await addPack(app.state, pack, store)).forEach(deleteAudio);
     app.save();
-    if ($('#view').classList.contains('focus')) showVoiceName(app); else render();
-  } catch { /* no pack, or offline: the browser voices still work */ }
+    if (!$('#view').classList.contains('focus')) render();
+  } catch { /* no pack, or offline: nothing else depends on it */ }
 })();

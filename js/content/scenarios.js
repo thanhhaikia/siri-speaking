@@ -1,9 +1,13 @@
 // Scripted conversations. Each has 4 turns. A turn:
 //   say / vi   — the partner's line and its Vietnamese meaning
 //   task       — the situation, in Vietnamese: what the learner needs to get across
-//   replies    — sample answers (any of them, or anything with the same idea, completes the turn)
-//   accept     — ideas that complete the turn: the reply must contain every word of at least one group
+//   replies    — sample answers the learner can say or adapt; a short one is complete and correct
 //   focus      — one word or phrase from the answer to repeat exactly, with one tip
+// final: one optional last question with the script hidden. The learner answers in their own words; it is never
+//   checked: `replies` are useful phrases shown afterwards for the learner to compare with.
+// accept: the turn's key words, used only as soft hints ("the browser heard: side") — a reply is never marked wrong.
+// Ids follow the text: when a conversation is rewritten it gets a new id, so old progress and takes never attach to new lines.
+// optional: an extra conversation, never picked for "Practice today"; next: the id of a follow-up conversation to offer.
 // twists: one-turn changes. Each new day the learner returns, the next twist replaces turn `at`,
 // so the conversation is slightly different from yesterday's.
 const f = (t, ipa, s, en, vi) => ({ t, ipa, s, tip: { en, vi } });
@@ -39,6 +43,11 @@ export const SCENARIOS = [
         focus: f('a few more minutes', '/ə fjuː mɔːr ˈmɪnɪts/', 'a FEW more MIN·utes', 'Finish "minutes" with /ts/, like the end of "cats".', 'Kết thúc "minutes" bằng /ts/, giống cuối từ "cats".'),
       },
     ],
+    final: {
+      say: 'Is everything okay with your meal?', vi: 'Món ăn của quý khách ổn chứ ạ?',
+      task: 'Trả lời bằng lời của bạn: món ăn thế nào?',
+      replies: ['Yes, everything is delicious. Thank you.', "It's very good, thanks.", 'Yes, the food is great.'],
+    },
     twists: [
       {
         at: 1, note: 'The waiter did not catch your answer.', noteVi: 'Hôm nay nhân viên nghe chưa rõ câu trả lời của bạn.',
@@ -99,6 +108,11 @@ export const SCENARIOS = [
         focus: f('have a nice day', '/hæv ə naɪs deɪ/', 'HAVE a NICE DAY', 'Link "have" to "a" — "hav-a" — and keep the /s/ at the end of "nice".', 'Nối "have" với "a" thành "hav-a" và giữ âm /s/ cuối từ "nice".'),
       },
     ],
+    final: {
+      say: 'Oh, before I go: any plans for tonight?', vi: 'À, trước khi đi: tối nay bạn có kế hoạch gì không?',
+      task: 'Trả lời bằng lời của bạn: tối nay bạn định làm gì?',
+      replies: ["I'm going to stay home and rest.", 'I will have dinner with my family.', 'Not really. Maybe I will watch a movie.'],
+    },
     twists: [
       {
         at: 0, note: 'A different opening question.', noteVi: 'Hôm nay người hàng xóm hỏi một câu khác.',
@@ -159,6 +173,11 @@ export const SCENARIOS = [
         focus: f("that's all, thanks", '/ðæts ɔːl θæŋks/', "THAT'S ALL, THANKS", '"Thanks" starts with /θ/ and ends with /ks/.', '"Thanks" bắt đầu bằng /θ/ và kết thúc bằng /ks/.'),
       },
     ],
+    final: {
+      say: 'One more question: how is your workload this week?', vi: 'Thêm một câu: tuần này khối lượng công việc của bạn thế nào?',
+      task: 'Trả lời bằng lời của bạn: tuần này bạn bận hay vẫn ổn?',
+      replies: ["It's busy, but I can manage.", 'It is fine this week.', 'A little heavy, but it is okay.'],
+    },
     twists: [
       {
         at: 2, note: 'Your manager is busy on Thursday.', noteVi: 'Hôm nay quản lý bận vào thứ Năm.',
@@ -219,6 +238,11 @@ export const SCENARIOS = [
         focus: f('password', '/ˈpæswɜːrd/', 'PASS·word', 'Stress the first part and finish with a clear /d/: PASS-word.', 'Nhấn âm tiết đầu và bật rõ âm /d/ ở cuối: PASS-word.'),
       },
     ],
+    final: {
+      say: 'One last thing: would you like a wake-up call tomorrow?', vi: 'Một điều nữa: quý khách có cần gọi báo thức sáng mai không ạ?',
+      task: 'Trả lời bằng lời của bạn: bạn có cần gọi báo thức không, lúc mấy giờ?',
+      replies: ['Yes, at six thirty, please.', "Yes, please. Seven o'clock.", "No, thank you. I don't need one."],
+    },
     twists: [
       {
         at: 1, note: 'The receptionist has the wrong number of nights.', noteVi: 'Hôm nay lễ tân ghi nhầm số đêm.',
@@ -279,6 +303,11 @@ export const SCENARIOS = [
         focus: f('thanks for your help', '/θæŋks fər jər help/', 'THANKS for your HELP', '/θ/ at the start of "thanks", and /lp/ at the end of "help": tongue up for /l/, then close your lips.', '/θ/ ở đầu "thanks", và /lp/ ở cuối "help": nâng lưỡi cho /l/ rồi khép môi.'),
       },
     ],
+    final: {
+      say: 'By the way, is this your first time in the city?', vi: 'À mà đây là lần đầu bạn đến thành phố này à?',
+      task: 'Trả lời bằng lời của bạn: đây có phải lần đầu bạn đến đây không?',
+      replies: ['Yes, it is my first time here.', 'Yes, I arrived this morning.', 'No, I came here last year.'],
+    },
     twists: [
       {
         at: 1, note: 'The station is farther than you thought.', noteVi: 'Hôm nay ga tàu xa hơn bạn nghĩ.',
@@ -339,6 +368,11 @@ export const SCENARIOS = [
         focus: f('how much is it', '/haʊ mʌtʃ ɪz ɪt/', 'HOW MUCH is it', 'Link the words — "much-iz-it" — and release /tʃ/ at the end of "much".', 'Nối các từ lại: "much-iz-it", và bật rõ âm /tʃ/ cuối từ "much".'),
       },
     ],
+    final: {
+      say: 'Would you like a bag?', vi: 'Bạn có cần túi không?',
+      task: 'Trả lời bằng lời của bạn: bạn có cần túi không?',
+      replies: ['No, thank you.', 'Yes, please.', "No, I don't need a bag, thanks."],
+    },
     twists: [
       {
         at: 0, note: 'A different problem today.', noteVi: 'Hôm nay bạn gặp vấn đề khác.',
@@ -370,74 +404,209 @@ export const SCENARIOS = [
     ],
   },
   {
-    id: 'delivery', icon: '🛵', color: '#f59e0b', focus: 'daily', partner: 'Restaurant staff', partnerVi: 'Nhân viên nhà hàng',
-    title: 'Ordering food delivery', titleVi: 'Gọi đồ ăn giao tận nhà',
-    intro: 'You are at home and call a pizza restaurant to order dinner.', introVi: 'Bạn đang ở nhà và gọi điện cho một tiệm pizza để đặt bữa tối.',
+    id: 'meet-neighbor', icon: '🏡', color: '#14b8a6', focus: 'daily', partner: 'Neighbor', partnerVi: 'Người hàng xóm',
+    title: 'Meet a new neighbor', titleVi: 'Làm quen hàng xóm mới',
+    intro: 'You have just moved into an apartment. You meet a neighbor in the hallway.', introVi: 'Bạn vừa chuyển đến một căn hộ. Bạn gặp một người hàng xóm ở hành lang.',
     turns: [
       {
-        say: 'Hello, Golden Pizza. What would you like to order?', vi: 'Xin chào, Golden Pizza xin nghe. Bạn muốn đặt món gì?',
-        task: 'Bạn muốn một pizza gà cỡ lớn.',
-        replies: ['One large chicken pizza, please.', "I'd like a large chicken pizza.", 'Can I get one large chicken pizza?'], accept: [['pizza']],
-        focus: f('large', '/lɑːrdʒ/', 'LARGE', 'Finish with /dʒ/, as in "job". Do not stop at "lar".', 'Kết thúc bằng âm /dʒ/ như trong "job". Đừng dừng ở "lar".'),
+        say: "Hello! I don't think we've met. Are you new here?", vi: 'Chào bạn! Hình như mình chưa gặp nhau. Bạn mới đến à?',
+        task: 'Bạn vừa chuyển đến căn 3B.',
+        replies: ['Yes, I just moved in. I live in 3B.', "Yes, I'm your new neighbor in 3B.", 'Yes, I moved in last week.'], accept: [['yes'], ['moved'], ['new']],
+        focus: f('I just moved in', '/aɪ dʒʌst muːvd ɪn/', 'I just MOVED in', 'The -ed in "moved" is a /d/. Link it to "in": "moov-din".', 'Đuôi -ed trong "moved" đọc là /d/. Nối với "in": "moov-din".'),
       },
       {
-        say: "Sure. What's your delivery address?", vi: 'Vâng. Địa chỉ giao hàng của bạn là gì?',
-        task: 'Địa chỉ của bạn: số 25 đường Lê Lợi, Quận 1.',
-        replies: ['Twenty-five Le Loi Street, District One.', "It's 25 Le Loi Street, District 1.", 'My address is 25 Le Loi Street.'], accept: [['street'], ['district'], ['le', 'loi']],
-        focus: f('street', '/striːt/', 'STREET', 'Say /s/, /t/ and /r/ together with no vowel between them, and finish with /t/.', 'Đọc liền /s/, /t/, /r/, không chêm nguyên âm vào giữa, và bật âm /t/ ở cuối.'),
+        say: "Welcome! I'm Anna, from 3A. What's your name?", vi: 'Chào mừng bạn! Tôi là Anna, ở căn 3A. Bạn tên gì?',
+        task: 'Nói tên bạn (câu mẫu dùng tên "Minh") và nói rất vui được gặp cô ấy.',
+        replies: ["I'm Minh. Nice to meet you, Anna.", 'My name is Minh. Nice to meet you.', "It's Minh. Nice to meet you, Anna."], accept: [['nice', 'meet'], ['name'], ['i', 'am']],
+        focus: f('nice to meet you', '/naɪs tə miːt juː/', 'NICE to MEET you', '"To" is weak here, /tə/, and "meet" has a long /iː/ and a final /t/.', '"To" ở đây đọc nhẹ thành /tə/, còn "meet" có âm /iː/ dài và âm /t/ ở cuối.'),
       },
       {
-        say: 'How would you like to pay?', vi: 'Bạn muốn thanh toán bằng cách nào?',
-        task: 'Bạn trả tiền mặt khi nhận hàng.',
-        replies: ['Cash, please.', "I'll pay in cash.", 'Cash on delivery, please.'], accept: [['cash']],
-        focus: f('cash', '/kæʃ/', 'CASH', 'The last sound is /ʃ/, as in "she". With /s/ it is not understood.', 'Âm cuối là /ʃ/ như trong "she". Đọc thành /s/ thì người nghe khó hiểu.'),
+        say: 'Nice to meet you too. Is there anything you need to know about the area?', vi: 'Tôi cũng rất vui được gặp bạn. Bạn có cần biết gì về khu này không?',
+        task: 'Hỏi một câu: gần đây có quán cà phê không?',
+        replies: ['Is there a café nearby?', 'Yes. Is there a coffee shop near here?', 'Where is the nearest café?'], accept: [['cafe'], ['coffee']],
+        focus: f('Is there a café nearby?', '/ɪz ðer ə kæˈfeɪ ˌnɪrˈbaɪ/', 'is there a ca·FÉ near·BY', 'This is a yes/no question, so your voice goes up at the end: near-BY↗.', 'Đây là câu hỏi có/không nên lên giọng ở cuối câu: near-BY↗.'),
       },
       {
-        say: 'Great. It will be there in about thirty minutes.', vi: 'Tuyệt. Khoảng ba mươi phút nữa sẽ giao tới.',
-        task: 'Cảm ơn và nhờ họ gọi điện khi đến nơi.',
-        replies: ['Thank you. Please call me when you arrive.', 'Thanks. Call me when the driver is here, please.', 'Great, thank you. Please ring me when it arrives.'], accept: [['call'], ['ring'], ['thank'], ['thanks']],
-        focus: f('when you arrive', '/wen ju əˈraɪv/', 'when you ar·RIVE', 'End "arrive" with /v/: top teeth on the bottom lip. Not "arrife".', 'Kết thúc "arrive" bằng âm /v/: răng trên chạm môi dưới. Không đọc thành "arrife".'),
+        say: "It's just downstairs. I can show you now, if you like.", vi: 'Ở ngay tầng dưới thôi. Nếu bạn muốn, tôi chỉ cho bạn ngay bây giờ.',
+        task: 'Nhận lời và cảm ơn.',
+        replies: ['That would be great. Thank you!', 'Yes, please. Thank you, Anna.', 'Thanks, that is very kind.'], accept: [['thank'], ['thanks'], ['yes'], ['please']],
+        focus: f('that would be great', '/ðæt wʊd bi ɡreɪt/', 'that would be GREAT', 'Finish "great" with a /t/. Without it, it sounds like "gray".', 'Đọc rõ âm /t/ ở cuối "great". Thiếu âm này sẽ nghe thành "gray".'),
       },
     ],
+    final: {
+      say: 'So, how do you like the building so far?', vi: 'Thế bạn thấy tòa nhà này thế nào?',
+      task: 'Trả lời bằng lời của bạn: bạn thấy tòa nhà thế nào?',
+      replies: ['I like it. It is quiet and clean.', "It's nice. The neighbors are friendly.", 'I really like it so far.'],
+    },
     twists: [
       {
-        at: 0, note: 'A different first question.', noteVi: 'Hôm nay nhân viên hỏi một câu khác.',
+        at: 2, note: 'Today you ask about parking.', noteVi: 'Hôm nay bạn hỏi về chỗ để xe.',
         turn: {
-          say: 'Hi, Golden Pizza. Is this for delivery or pick-up?', vi: 'Xin chào, Golden Pizza. Bạn muốn giao tận nơi hay tự đến lấy?',
-          task: 'Bạn muốn giao tận nhà.',
-          replies: ['Delivery, please.', "It's for delivery.", "I'd like it delivered, please."], accept: [['delivery'], ['delivered'], ['deliver']],
-          focus: f('delivery', '/dɪˈlɪvəri/', 'de·LIV·er·y', 'Stress the second part: de-LIV-er-y. The middle sound is /v/, not /b/.', 'Nhấn âm tiết thứ hai: de-LIV-er-y. Âm giữa là /v/, không phải /b/.'),
+          say: 'Nice to meet you too. Is there anything you would like to know about the building?', vi: 'Tôi cũng rất vui được gặp bạn. Bạn có muốn biết gì về tòa nhà không?',
+          task: 'Hỏi một câu: để xe máy ở đâu?',
+          replies: ['Where can I park my motorbike?', 'Is there parking for motorbikes?', 'Where is the parking area?'], accept: [['park'], ['parking']],
+          focus: f('park my motorbike', '/pɑːrk maɪ ˈmoʊtərbaɪk/', 'PARK my MO·tor·bike', 'Both "park" and "bike" end with /k/. Release it lightly; do not drop it.', 'Cả "park" và "bike" đều kết thúc bằng /k/. Bật nhẹ âm này, đừng bỏ mất.'),
         },
       },
       {
-        at: 2, note: 'They offer drinks.', noteVi: 'Hôm nay nhân viên mời bạn gọi thêm đồ uống.',
+        at: 2, note: 'Today you ask about the trash.', noteVi: 'Hôm nay bạn hỏi về chỗ đổ rác.',
         turn: {
-          say: 'Would you like any drinks with that?', vi: 'Bạn có muốn gọi thêm đồ uống không?',
-          task: 'Bạn muốn hai chai nước suối.',
-          replies: ['Two bottles of water, please.', 'Yes, two waters, please.', "I'd like two bottles of water."], accept: [['water'], ['waters']],
-          focus: f('bottles of water', '/ˈbɑːtəlz əv ˈwɔːtər/', 'BOT·tles of WA·ter', 'End "bottles" with /z/ and link it to "of": "bottles-of".', 'Kết thúc "bottles" bằng /z/ và nối với "of": "bottles-of".'),
+          say: 'Nice to meet you too. Do you have any questions about living here?', vi: 'Tôi cũng rất vui được gặp bạn. Bạn có thắc mắc gì về việc sống ở đây không?',
+          task: 'Hỏi một câu: đổ rác ở đâu?',
+          replies: ['Where do I take the trash?', 'Where should I put my trash?', 'Where is the trash area?'], accept: [['trash'], ['rubbish'], ['garbage']],
+          focus: f('trash', '/træʃ/', 'TRASH', 'Keep /tr/ together and end with /ʃ/, as in "she". It is not "tras".', 'Đọc liền /tr/ và kết thúc bằng /ʃ/ như trong "she". Không đọc thành "tras".'),
         },
       },
       {
-        at: 3, note: 'The restaurant is busy tonight.', noteVi: 'Hôm nay quán rất đông khách.',
+        at: 1, note: 'A different second question.', noteVi: 'Hôm nay cô ấy hỏi bạn sống với ai.',
         turn: {
-          say: "I'm sorry, we're very busy tonight. It will take about an hour. Is that okay?", vi: 'Xin lỗi, tối nay quán rất đông. Sẽ mất khoảng một tiếng. Như vậy có được không?',
-          task: 'Đồng ý và nói bạn chờ được.',
-          replies: ["That's fine. I can wait.", 'No problem. An hour is okay.', "Okay, I'll wait. Thank you."], accept: [['wait'], ['fine'], ['okay'], ['ok'], ['problem']],
-          focus: f("that's fine", '/ðæts faɪn/', "THAT'S FINE", 'Start with the voiced /ð/, then keep /ts/ at the end of "that\'s".', 'Bắt đầu bằng âm hữu thanh /ð/, rồi giữ /ts/ ở cuối "that\'s".'),
+          say: "Welcome! I'm Anna, from 3A. Do you live alone or with your family?", vi: 'Chào mừng bạn! Tôi là Anna, ở căn 3A. Bạn sống một mình hay với gia đình?',
+          task: 'Bạn sống với bố mẹ và em gái.',
+          replies: ['I live with my family.', 'With my parents and my sister.', 'I live with my parents and my younger sister.'], accept: [['family'], ['parents'], ['sister']],
+          focus: f('with my family', '/wɪð maɪ ˈfæməli/', 'with my FAM·i·ly', 'End "with" with /ð/, then stress the first part of "family".', 'Kết thúc "with" bằng /ð/, rồi nhấn âm tiết đầu của "family".'),
         },
       },
     ],
   },
   {
-    id: 'interview', icon: '🤝', color: '#0f766e', focus: 'work', partner: 'Interviewer', partnerVi: 'Người phỏng vấn',
-    title: 'A job interview', titleVi: 'Phỏng vấn xin việc',
-    intro: 'You are interviewing for an office job at a company in Ho Chi Minh City.', introVi: 'Bạn đang phỏng vấn cho một vị trí văn phòng tại một công ty ở TP. Hồ Chí Minh.',
+    id: 'delivery-driver', icon: '🛵', color: '#f59e0b', focus: 'daily', partner: 'Delivery driver', partnerVi: 'Tài xế giao hàng',
+    title: 'Help a delivery driver find you', titleVi: 'Chỉ đường cho tài xế giao hàng',
+    intro: 'You ordered lunch. The driver calls you because he cannot find your building.', introVi: 'Bạn đặt bữa trưa. Tài xế gọi điện vì không tìm thấy tòa nhà của bạn.',
     turns: [
       {
-        say: 'Thanks for coming in. Can you tell me a little about yourself?', vi: 'Cảm ơn bạn đã đến. Bạn giới thiệu đôi chút về mình được không?',
-        task: 'Bạn có ba năm kinh nghiệm làm chăm sóc khách hàng.',
-        replies: ['I have three years of experience in customer service.', "I've worked in customer service for three years.", 'I work in customer service. I have three years of experience.'], accept: [['experience'], ['customer', 'service'], ['three', 'years']],
+        say: "Hello, I have your food order. I'm outside, but I can't find your building.", vi: 'Xin chào, tôi giao đồ ăn cho bạn. Tôi đang ở ngoài nhưng không tìm thấy tòa nhà.',
+        task: 'Bạn ở tòa nhà màu trắng, cạnh ngân hàng.',
+        replies: ["Hi! It's the white building next to the bank.", "I'm in the white building, next to the bank.", 'Look for the white building beside the bank.'], accept: [['white'], ['bank']],
+        focus: f('next to the bank', '/nekst tə ðə bæŋk/', 'NEXT to the BANK', 'Finish "bank" with /k/. "Next to" is said together: "nex-to".', 'Đọc rõ âm /k/ ở cuối "bank". "Next to" đọc liền thành "nex-to".'),
+      },
+      {
+        say: 'Okay, I see it. Which entrance should I use?', vi: 'Được rồi, tôi thấy rồi. Tôi nên vào bằng cổng nào?',
+        task: 'Bảo tài xế đến cổng phụ (side gate).',
+        replies: ['The side gate, please.', 'Please come to the side gate.', 'Use the side gate, not the front door.'], accept: [['side']],
+        focus: f('the side gate', '/ðə saɪd ɡeɪt/', 'the SIDE GATE', '"Side" ends with /d/ and "gate" ends with /t/. Say both final sounds.', '"Side" kết thúc bằng /d/, "gate" kết thúc bằng /t/. Hãy đọc đủ cả hai âm cuối.'),
+      },
+      {
+        say: 'The side gate... where is that?', vi: 'Cổng phụ... nó ở đâu vậy?',
+        task: 'Chỉ một hướng: rẽ trái sau ngân hàng.',
+        replies: ['Turn left after the bank.', 'Go past the bank and turn left.', "It's on the left, after the bank."], accept: [['left']],
+        focus: f('turn left', '/tɜːrn left/', 'TURN LEFT', '"Left" ends with two sounds, /f/ then /t/. Do not stop at "lef".', '"Left" kết thúc bằng hai âm /f/ rồi /t/. Đừng dừng ở "lef".'),
+      },
+      {
+        say: 'Got it. Where should I meet you?', vi: 'Hiểu rồi. Tôi gặp bạn ở đâu?',
+        task: 'Xác nhận điểm gặp: bạn đang ở cổng phụ.',
+        replies: ["I'm at the side gate.", "I'll meet you at the side gate.", 'I am waiting at the side gate.'], accept: [['gate'], ['side']],
+        focus: f("I'll meet you at the gate", '/aɪl miːt ju ət ðə ɡeɪt/', "I'll MEET you at the GATE", 'Say the "ll" in "I\'ll", and link "meet you": "mee-chu".', 'Đọc rõ âm "ll" trong "I\'ll" và nối "meet you" thành "mee-chu".'),
+      },
+    ],
+    final: {
+      say: 'Sorry, I forgot. Which gate?', vi: 'Xin lỗi, tôi quên mất. Cổng nào nhỉ?',
+      task: 'Trả lời bằng lời của bạn: tài xế hỏi lại là cổng nào.',
+      replies: ['The side gate, please.', "The side gate. I'm waiting there.", 'The side one, next to the bank.'],
+    },
+    twists: [
+      {
+        at: 3, note: 'The driver is late.', noteVi: 'Hôm nay tài xế đến trễ.',
+        turn: {
+          say: "Got it. Sorry, there's a lot of traffic. I'll be there in ten minutes. Is that okay?", vi: 'Hiểu rồi. Xin lỗi, đường đang kẹt xe. Mười phút nữa tôi tới. Như vậy được không?',
+          task: 'Đồng ý và nói bạn sẽ chờ ở cổng phụ.',
+          replies: ["That's fine. I'll wait at the side gate.", 'No problem. See you in ten minutes.', 'Okay, I can wait.'], accept: [['fine'], ['problem'], ['okay'], ['wait']],
+          focus: f("I'll wait at the side gate", '/aɪl weɪt ət ðə saɪd ɡeɪt/', "I'll WAIT at the SIDE GATE", '"Wait" and "gate" both end with /t/. Link "wait at": "wei-tat".', '"Wait" và "gate" đều kết thúc bằng /t/. Nối "wait at" thành "wei-tat".'),
+        },
+      },
+      {
+        at: 3, note: 'Something is missing from the order.', noteVi: 'Hôm nay đơn hàng bị thiếu món.',
+        turn: {
+          say: "Got it. One more thing: the restaurant forgot your drink. I'm sorry about that.", vi: 'Hiểu rồi. Còn một việc: quán quên đồ uống của bạn. Tôi xin lỗi nhé.',
+          task: 'Nói không sao và lịch sự xin hoàn tiền đồ uống.',
+          replies: ['That is okay. Could I get a refund for the drink?', 'No problem. Could I have a refund, please?', "It's fine. Could you refund the drink?"], accept: [['refund']],
+          focus: f('Could I get a refund?', '/kʊd aɪ ɡet ə ˈriːfʌnd/', 'could I get a RE·fund', '"Could I…" is a polite way to ask. Link it: "cu-dai".', '"Could I…" là cách hỏi lịch sự. Nối âm thành "cu-dai".'),
+        },
+      },
+      {
+        at: 0, note: 'The driver is at the wrong address.', noteVi: 'Hôm nay tài xế đến nhầm địa chỉ.',
+        turn: {
+          say: "Hi, this is your delivery driver. I think I'm at the wrong address. What's your building number?", vi: 'Chào bạn, tôi là tài xế giao hàng. Hình như tôi đến nhầm địa chỉ. Tòa nhà của bạn số mấy?',
+          task: 'Tòa nhà của bạn là số 15, đường Trần Phú.',
+          replies: ["It's number fifteen, Tran Phu Street.", 'Number 15 on Tran Phu Street.', 'Building fifteen, Tran Phu Street.'], accept: [['fifteen']],
+          focus: f('fifteen', '/ˌfɪfˈtiːn/', 'fif·TEEN', 'Stress the end and finish with /n/: fif-TEEN. With the stress at the start it sounds like "fifty".', 'Nhấn âm tiết cuối và đọc rõ âm /n/: fif-TEEN. Nhấn âm đầu sẽ nghe thành "fifty".'),
+        },
+      },
+    ],
+  },
+  {
+    id: 'job-interview', icon: '🤝', color: '#0f766e', focus: 'work', partner: 'Interviewer', partnerVi: 'Người phỏng vấn', next: 'interview-2',
+    title: 'A short job interview', titleVi: 'Phỏng vấn xin việc ngắn',
+    intro: 'You are interviewing for a job. Use your real job, or the example: quality control at a factory.', introVi: 'Bạn đang phỏng vấn xin việc. Hãy dùng công việc thật của bạn, hoặc ví dụ: kiểm tra chất lượng ở nhà máy.',
+    turns: [
+      {
+        say: 'Good morning. Please tell me a little about yourself.', vi: 'Chào buổi sáng. Bạn giới thiệu đôi chút về mình nhé.',
+        task: 'Giới thiệu tên và công việc của bạn (câu mẫu: Lan, kiểm tra chất lượng ở nhà máy).',
+        replies: ["I'm Lan. I work in quality control at a factory.", 'My name is Lan, and I work in quality control.', "I'm Lan. I have worked in a factory for three years."], accept: [['work'], ['worked'], ['name'], ['i', 'am'], ['job']],
+        focus: f('quality control', '/ˈkwɑːləti kənˈtroʊl/', 'QUAL·i·ty con·TROL', 'Stress QUAL in "quality" and TROL in "control". "Qu" is /kw/.', 'Nhấn QUAL trong "quality" và TROL trong "control". "Qu" đọc là /kw/.'),
+      },
+      {
+        say: 'What do you do in your job every day?', vi: 'Hằng ngày bạn làm những việc gì?',
+        task: 'Mô tả công việc (câu mẫu: kiểm tra lỗi trên các chi tiết đã sơn).',
+        replies: ['I check painted parts for defects.', 'I inspect the parts and write a report.', 'I check the products before they are shipped.'], accept: [['check'], ['inspect'], ['parts'], ['products'], ['report'], ['customers'], ['work']],
+        focus: f('painted parts', '/ˈpeɪntɪd pɑːrts/', 'PAINT·ed PARTS', 'After /t/, -ed is an extra syllable: PAIN-tid. "Parts" ends with /ts/.', 'Sau âm /t/, đuôi -ed là một âm tiết riêng: PAIN-tid. "Parts" kết thúc bằng /ts/.'),
+      },
+      {
+        say: 'Can you give me one example of a problem you solved?', vi: 'Bạn nêu một ví dụ về vấn đề bạn đã giải quyết được không?',
+        task: 'Nêu một ví dụ (câu mẫu: tháng trước bạn phát hiện lỗi sơn và báo tổ trưởng).',
+        replies: ['Last month I found a paint defect and told my team leader.', 'I found a defect early, so we fixed it the same day.', 'Once I noticed a problem and stopped the line.'], accept: [['found'], ['fixed'], ['solved'], ['noticed'], ['problem'], ['defect']],
+        focus: f('found a defect', '/faʊnd ə ˈdiːfekt/', 'FOUND a DE·fect', 'Link "found a": "foun-da". "Defect" ends with /kt/; say both sounds.', 'Nối "found a" thành "foun-da". "Defect" kết thúc bằng /kt/; đọc đủ cả hai âm.'),
+      },
+      {
+        say: 'Thank you. Do you have any questions for me?', vi: 'Cảm ơn bạn. Bạn có câu hỏi nào cho tôi không?',
+        task: 'Hỏi một câu để kết thúc: giờ làm việc thế nào?',
+        replies: ['Yes. What are the working hours?', 'Could I ask about the working hours?', 'Yes. When does the job start?'], accept: [['hours'], ['start'], ['when'], ['what'], ['could']],
+        focus: f('Could I ask about the working hours?', '/kʊd aɪ æsk əˈbaʊt ðə ˈwɜːrkɪŋ ˈaʊərz/', 'could I ASK about the WORK·ing HOURS', '"Could I ask…" is polite. The "h" in "hours" is silent: "ow-erz".', '"Could I ask…" là cách hỏi lịch sự. Chữ "h" trong "hours" là âm câm: "ow-erz".'),
+      },
+    ],
+    final: {
+      say: 'One last thing: can you work on weekends if we need you?', vi: 'Câu cuối: khi cần, bạn có thể làm việc cuối tuần không?',
+      task: 'Trả lời bằng lời của bạn: bạn có làm cuối tuần được không?',
+      replies: ['Yes, I can work on Saturdays.', "Yes, that's no problem.", 'Sometimes, but not every week.'],
+    },
+    twists: [
+      {
+        at: 1, note: 'A question about your tools.', noteVi: 'Hôm nay người phỏng vấn hỏi về công cụ bạn dùng.',
+        turn: {
+          say: 'What tools or software do you use at work?', vi: 'Ở chỗ làm bạn dùng công cụ hay phần mềm gì?',
+          task: 'Bạn dùng Excel và email mỗi ngày.',
+          replies: ['I use Excel and email every day.', 'Mostly Excel, and email for reports.', 'I use Excel to record the results.'], accept: [['excel'], ['use']],
+          focus: f('I use Excel', '/aɪ juːz ɪkˈsel/', 'I USE ex·CEL', 'The verb "use" ends with /z/, and "Excel" is stressed at the end: ex-CEL.', 'Động từ "use" kết thúc bằng /z/, còn "Excel" nhấn ở cuối: ex-CEL.'),
+        },
+      },
+      {
+        at: 2, note: 'A question about teamwork.', noteVi: 'Hôm nay người phỏng vấn hỏi về làm việc nhóm.',
+        turn: {
+          say: 'Tell me about a time you worked with a team.', vi: 'Hãy kể về một lần bạn làm việc cùng nhóm.',
+          task: 'Nhóm bạn đã cùng hoàn thành một đơn hàng lớn đúng hạn.',
+          replies: ['We finished a big order on time together.', 'My team and I finished a large order on time.', 'Last year we worked together on a big order.'], accept: [['team'], ['together'], ['we']],
+          focus: f('finished on time', '/ˈfɪnɪʃt ɑːn taɪm/', 'FIN·ished on TIME', 'The -ed in "finished" is a /t/: FIN-isht. Link it: "finish-ton".', 'Đuôi -ed trong "finished" đọc là /t/: FIN-isht. Nối âm: "finish-ton".'),
+        },
+      },
+      {
+        at: 3, note: 'A different closing question.', noteVi: 'Hôm nay bạn hỏi về lịch làm việc.',
+        turn: {
+          say: 'Thank you. Do you have any questions about the schedule or the salary?', vi: 'Cảm ơn bạn. Bạn có câu hỏi nào về lịch làm việc hay mức lương không?',
+          task: 'Lịch sự hỏi về lịch làm việc.',
+          replies: ['Could you tell me about the schedule?', 'Yes. Is there overtime?', 'What is the salary for this position?'], accept: [['schedule'], ['overtime'], ['salary']],
+          focus: f('schedule', '/ˈskedʒuːl/', 'SCHED·ule', 'In American English it starts with /sk/: SKED-jool.', 'Trong tiếng Anh Mỹ, từ này bắt đầu bằng /sk/: SKED-jool.'),
+        },
+      },
+    ],
+  },
+  {
+    id: 'interview-2', icon: '⭐', color: '#0369a1', focus: 'work', partner: 'Interviewer', partnerVi: 'Người phỏng vấn', optional: true,
+    title: 'Interview 2: strengths and experience', titleVi: 'Phỏng vấn 2: điểm mạnh và kinh nghiệm',
+    intro: 'An optional second interview, if you want more practice. This time you talk about your experience and strengths.', introVi: 'Buổi phỏng vấn thứ hai, không bắt buộc, nếu bạn muốn luyện thêm. Lần này bạn nói về kinh nghiệm và điểm mạnh của mình.',
+    turns: [
+      {
+        say: 'Thanks for coming back. How much experience do you have?', vi: 'Cảm ơn bạn đã quay lại. Bạn có bao nhiêu năm kinh nghiệm?',
+        task: 'Bạn có ba năm kinh nghiệm chăm sóc khách hàng (hoặc nói về công việc thật của bạn).',
+        replies: ['I have three years of experience in customer service.', "I've worked in customer service for three years.", 'Three years. I work in customer service.'], accept: [['experience'], ['customer', 'service'], ['years']],
         focus: f('experience', '/ɪkˈspɪriəns/', 'ex·PE·ri·ence', 'Stress the second part, ex-PE-ri-ence, and finish with a clear /s/.', 'Nhấn âm tiết thứ hai: ex-PE-ri-ence, và đọc rõ âm /s/ ở cuối.'),
       },
       {
@@ -459,11 +628,16 @@ export const SCENARIOS = [
         focus: f('next month', '/nekst mʌnθ/', 'NEXT MONTH', '"Month" ends with /θ/: tongue between the teeth. Not "mont" or "mons".', '"Month" kết thúc bằng /θ/: lưỡi giữa hai hàm răng. Không đọc thành "mont" hay "mons".'),
       },
     ],
+    final: {
+      say: 'Is there anything else you would like to tell me?', vi: 'Bạn còn điều gì muốn chia sẻ thêm không?',
+      task: 'Trả lời bằng lời của bạn: nói thêm một điều về bạn, hoặc cảm ơn.',
+      replies: ['I learn fast and I work hard.', 'I am very interested in this job.', 'No, thank you. I look forward to hearing from you.'],
+    },
     twists: [
       {
-        at: 0, note: 'A different first question.', noteVi: 'Hôm nay người phỏng vấn hỏi về công việc hiện tại.',
+        at: 0, note: 'A question about your current job.', noteVi: 'Hôm nay người phỏng vấn hỏi về công việc hiện tại.',
         turn: {
-          say: 'Welcome. What do you do in your current job?', vi: 'Chào bạn. Ở công việc hiện tại bạn làm gì?',
+          say: 'Welcome back. What do you do in your current job?', vi: 'Chào bạn. Ở công việc hiện tại bạn làm gì?',
           task: 'Bạn trả lời email và cuộc gọi của khách hàng.',
           replies: ['I answer emails and calls from customers.', 'I help customers by email and phone.', 'I reply to customer emails and take their calls.'], accept: [['customers'], ['customer'], ['emails'], ['email']],
           focus: f('customers', '/ˈkʌstəmərz/', 'CUS·tom·ers', 'Stress the first part and finish with /z/: CUS-tom-erz.', 'Nhấn âm tiết đầu và kết thúc bằng /z/: CUS-tom-erz.'),
@@ -479,72 +653,12 @@ export const SCENARIOS = [
         },
       },
       {
-        at: 3, note: 'It is your turn to ask.', noteVi: 'Hôm nay đến lượt bạn đặt câu hỏi.',
+        at: 3, note: 'A question about the future.', noteVi: 'Hôm nay người phỏng vấn hỏi về kế hoạch tương lai.',
         turn: {
-          say: 'Do you have any questions for me?', vi: 'Bạn có câu hỏi nào cho tôi không?',
-          task: 'Hỏi về giờ làm việc.',
-          replies: ['Yes. What are the working hours?', 'Could you tell me about the working hours?', 'What time does the work day start and finish?'], accept: [['hours'], ['time']],
-          focus: f('working hours', '/ˈwɜːrkɪŋ ˈaʊərz/', 'WORK·ing HOURS', 'The "h" in "hours" is silent: "ow-erz". "Work" has /ɜːr/; it is not "walk".', 'Chữ "h" trong "hours" là âm câm: "ow-erz". "Work" có âm /ɜːr/, không phải "walk".'),
-        },
-      },
-    ],
-  },
-  {
-    id: 'new-neighbor', icon: '🏡', color: '#14b8a6', focus: 'daily', partner: 'New neighbor', partnerVi: 'Hàng xóm mới',
-    title: 'Meeting a new neighbor', titleVi: 'Làm quen hàng xóm mới',
-    intro: 'Someone has just moved in next door. She knocks on your door to say hello.', introVi: 'Có người vừa chuyển đến nhà bên cạnh. Cô ấy gõ cửa nhà bạn để chào hỏi.',
-    turns: [
-      {
-        say: "Hi! I'm Anna. I just moved in next door.", vi: 'Chào bạn! Tôi là Anna. Tôi vừa chuyển đến nhà bên cạnh.',
-        task: 'Chào lại và chào mừng cô ấy.',
-        replies: ['Hi Anna, nice to meet you. Welcome!', "Nice to meet you, Anna. I'm your neighbor.", 'Hello! Welcome to the building.'], accept: [['nice', 'meet'], ['welcome'], ['hello'], ['hi']],
-        focus: f('nice to meet you', '/naɪs tə miːt juː/', 'NICE to MEET you', '"To" is weak here, /tə/, and "meet" has a long /iː/.', '"To" ở đây đọc nhẹ thành /tə/, và "meet" có âm /iː/ dài.'),
-      },
-      {
-        say: 'Thank you! How long have you lived here?', vi: 'Cảm ơn bạn! Bạn sống ở đây bao lâu rồi?',
-        task: 'Bạn sống ở đây được năm năm rồi.',
-        replies: ['I have lived here for five years.', 'For five years now.', 'About five years.'], accept: [['five']],
-        focus: f('for five years', '/fər faɪv jɪrz/', 'for FIVE YEARS', 'Finish "five" with /v/ and "years" with /z/. Do not drop either.', 'Kết thúc "five" bằng /v/ và "years" bằng /z/. Đừng bỏ âm nào.'),
-      },
-      {
-        say: 'Is there a supermarket near here?', vi: 'Gần đây có siêu thị nào không?',
-        task: 'Có, ở ngay góc phố.',
-        replies: ["Yes, there's one on the corner.", 'Yes, on the corner of this street.', "There is one at the corner. It's very close."], accept: [['corner'], ['yes'], ['close']],
-        focus: f('on the corner', '/ɑːn ðə ˈkɔːrnər/', 'on the COR·ner', '"The" starts with the voiced /ð/. Stress the first part of "corner".', '"The" bắt đầu bằng âm hữu thanh /ð/. Nhấn âm tiết đầu của "corner".'),
-      },
-      {
-        say: "That's great. Thanks for your help!", vi: 'Tốt quá. Cảm ơn bạn đã giúp!',
-        task: 'Nói không có gì và bảo cô ấy cứ nói nếu cần gì.',
-        replies: ["You're welcome. Let me know if you need anything.", 'No problem. Just knock if you need help.', 'Any time. Tell me if you need anything.'], accept: [['welcome'], ['problem'], ['need']],
-        focus: f('if you need anything', '/ɪf ju niːd ˈeniθɪŋ/', 'if you NEED AN·y·thing', '"Anything" has /θ/: tongue between the teeth. Not "anyting".', '"Anything" có âm /θ/: lưỡi giữa hai hàm răng. Không đọc thành "anyting".'),
-      },
-    ],
-    twists: [
-      {
-        at: 1, note: 'A question about who you live with.', noteVi: 'Hôm nay cô ấy hỏi bạn sống với ai.',
-        turn: {
-          say: 'Thanks! Do you live alone or with your family?', vi: 'Cảm ơn bạn! Bạn sống một mình hay với gia đình?',
-          task: 'Bạn sống với bố mẹ và em gái.',
-          replies: ['I live with my family.', 'With my parents and my sister.', 'I live with my parents and my younger sister.'], accept: [['family'], ['parents'], ['sister']],
-          focus: f('with my family', '/wɪð maɪ ˈfæməli/', 'with my FAM·i·ly', 'End "with" with /ð/, then stress the first part of "family".', 'Kết thúc "with" bằng /ð/, rồi nhấn âm tiết đầu của "family".'),
-        },
-      },
-      {
-        at: 2, note: 'A question about the trash.', noteVi: 'Hôm nay cô ấy hỏi về giờ thu gom rác.',
-        turn: {
-          say: 'When do they pick up the trash here?', vi: 'Ở đây người ta thu gom rác lúc nào?',
-          task: 'Mỗi sáng lúc bảy giờ.',
-          replies: ['Every morning at seven.', "At seven o'clock every morning.", 'They come at seven in the morning.'], accept: [['seven'], ['morning']],
-          focus: f('every morning', '/ˈevri ˈmɔːrnɪŋ/', 'EV·ery MORN·ing', '"Every" has two parts, EV-ree, with a /v/: top teeth on the bottom lip.', '"Every" chỉ có hai âm tiết: EV-ree, với âm /v/: răng trên chạm môi dưới.'),
-        },
-      },
-      {
-        at: 3, note: 'An invitation.', noteVi: 'Hôm nay cô ấy mời bạn sang chơi.',
-        turn: {
-          say: 'By the way, would you like to come over for coffee this weekend?', vi: 'À, cuối tuần này bạn sang nhà tôi uống cà phê nhé?',
-          task: 'Vui vẻ nhận lời.',
-          replies: ["I'd love to. Thank you!", 'Yes, that sounds great.', 'Sure, that would be lovely.'], accept: [['love'], ['yes'], ['sure'], ['great'], ['lovely']],
-          focus: f("I'd love to", '/aɪd lʌv tuː/', "I'd LOVE to", 'Keep the /d/ in "I\'d" and the /v/ in "love".', 'Giữ âm /d/ trong "I\'d" và âm /v/ trong "love".'),
+          say: 'Where do you see yourself in three years?', vi: 'Ba năm nữa bạn thấy mình ở vị trí nào?',
+          task: 'Bạn muốn trở thành trưởng nhóm.',
+          replies: ['I would like to be a team leader.', 'I hope to lead a small team.', "I'd like to become a team leader here."], accept: [['team'], ['leader'], ['lead']],
+          focus: f('team leader', '/tiːm ˈliːdər/', 'TEAM LEAD·er', 'Both words have a long /iː/. Close your lips for the /m/ at the end of "team".', 'Cả hai từ đều có âm /iː/ dài. Khép môi để đọc âm /m/ cuối từ "team".'),
         },
       },
     ],

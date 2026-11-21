@@ -17,7 +17,7 @@ export const HINTS = {
   cluster: { sound: 'consonant cluster', en: 'Say the consonants together without adding a vowel between them.', vi: 'Đọc liền cụm phụ âm, không chèn nguyên âm vào giữa.' },
   stress: { sound: 'word stress', en: 'Check the word stress: make the stressed syllable longer and louder.', vi: 'Kiểm tra trọng âm: đọc âm tiết nhấn dài và to hơn.' },
   missing: { sound: 'missing word', en: 'This word was not heard. Say every word, including small ones.', vi: 'Không nghe thấy từ này. Hãy đọc đủ mọi từ, kể cả từ ngắn.' },
-  generic: { sound: 'unclear', en: 'This word was unclear. Listen to the model and copy it slowly.', vi: 'Từ này chưa rõ. Hãy nghe mẫu và đọc chậm theo.' },
+  generic: { sound: 'unclear', en: 'This word was unclear. Listen to the coach and copy it slowly.', vi: 'Từ này chưa rõ. Hãy nghe mẫu và đọc chậm theo.' },
 };
 
 const VOWELS = 'aeiouy';

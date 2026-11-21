@@ -21,6 +21,10 @@ export const tooQuiet = (stats) => !stats || stats.peak < 0.02 || stats.voicedSe
 export const recorderSupported = () => typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia && typeof MediaRecorder !== 'undefined';
 export const isMobile = () => typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
+const TYPES = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/ogg;codecs=opus'];
+/** The first recording format this browser can write: webm/Opus in Chrome and on Android, mp4/AAC in iPhone Safari. '' = browser default. */
+export const recordingType = () => (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported ? TYPES.find((t) => MediaRecorder.isTypeSupported(t)) || '' : '');
+
 /**
  * Start recording. Rejects with the getUserMedia error when the microphone is unavailable.
  * @param {{onLevel?: (rms: number) => void, onSilence?: () => void, silenceSec?: number}} opts
@@ -31,7 +35,8 @@ export async function startRecording({ onLevel, onSilence, silenceSec = 1.6 } = 
   if (!recorderSupported()) throw new Error('unsupported');
   const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
   const chunks = [];
-  const recorder = new MediaRecorder(stream);
+  const mime = recordingType();
+  const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
   recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
   recorder.start();
 
@@ -67,7 +72,7 @@ export async function startRecording({ onLevel, onSilence, silenceSec = 1.6 } = 
         const finish = () => {
           stream.getTracks().forEach((t) => t.stop());
           ctx?.close().catch(() => {});
-          const blob = chunks.length ? new Blob(chunks, { type: recorder.mimeType || 'audio/webm' }) : null;
+          const blob = chunks.length ? new Blob(chunks, { type: recorder.mimeType || mime || 'audio/webm' }) : null;
           // Without Web Audio there are no loudness frames: assume the recording is usable.
           const stats = frames.length ? analyzeFrames(frames) : { peak: 1, voicedSec: 1, totalSec: 0, pauses: 0, unmeasured: true };
           resolve({ blob, stats });
@@ -86,16 +91,24 @@ export function stopAudio() {
   if (playerUrl) URL.revokeObjectURL(playerUrl);
   player = playerUrl = null;
 }
-/** Play a recording. Resolves when playback ends. */
-export function playAudio(blob) {
+/**
+ * Play a recording. One thing plays at a time: the coach voice and any earlier recording are stopped first.
+ * Resolves when playback ends (true) or fails (false); the object URL is released either way.
+ */
+export function playAudio(blob, rate = 1) {
   return new Promise((resolve) => {
     stopAudio();
+    globalThis.speechSynthesis?.cancel();
     if (!blob) return resolve(false);
-    playerUrl = URL.createObjectURL(blob);
-    player = new Audio(playerUrl);
-    player.onended = () => resolve(true);
-    player.onerror = () => resolve(false);
-    player.play().catch(() => resolve(false));
+    const url = URL.createObjectURL(blob), audio = new Audio(url);
+    const done = (ok) => { if (player === audio) stopAudio(); else URL.revokeObjectURL(url); resolve(ok); };
+    player = audio;
+    playerUrl = url;
+    audio.preservesPitch = true;
+    audio.playbackRate = rate;
+    audio.onended = () => done(true);
+    audio.onerror = () => done(false);
+    audio.play().catch(() => done(false));
   });
 }
 

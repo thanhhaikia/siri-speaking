@@ -38,5 +38,5 @@ export function ring(pct, size = 170, big = '', label = '') {
     <div class="ring-val"><b>${esc(big)}</b><small>${esc(label)}</small></div></div>`;
 }
 
-export const topBar = (pct, backHref = '#/') => `<div class="bar-top"><a class="x" href="${backHref}" aria-label="Close">✕</a><div class="progress"><i style="width:${Math.round(pct)}%"></i></div><button class="voice-btn" data-voice aria-label="Change the model voice">🗣️ Voice</button></div>`;
+export const topBar = (pct, backHref = '#/') => `<div class="bar-top"><a class="x" href="${backHref}" aria-label="Close">✕</a><div class="progress"><i style="width:${Math.round(pct)}%"></i></div><button class="voice-btn" data-voice aria-label="Change the coach voice">🗣️ Voice</button></div>`;
 export const fmtDate = (ts) => new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
