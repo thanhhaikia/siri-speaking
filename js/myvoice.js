@@ -35,6 +35,7 @@ export async function addPack(state, pack, store) {
   if (!pack?.id || state.voicePack === pack.id) return [];
   const lines = pack.lines || [], files = [pack.sample, ...lines.map((l) => l.file)].filter(Boolean), keys = {}, used = [];
   for (const file of files) keys[file] = await store(file);
+  if (files.some((file) => !keys[file])) return Object.values(keys).filter(Boolean); // a file failed: change nothing, try again on the next visit
   const add = (file, rec) => { used.push(keys[file]); addRecording(state, { ...rec, audio: keys[file] }); };
   if (!state.myVoice?.sample) add(pack.sample, { name: state.myVoice?.name || pack.name });
   for (const line of lines) if (!clipFor(state, line.t)) add(line.file, { text: line.t, vi: line.vi });

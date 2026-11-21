@@ -165,6 +165,8 @@ test('my voice: the bundled voice pack is added once and stays deleted', async (
   const state = defaultState();
   const pack = { id: 'p1', name: 'My voice', sample: 's.mp3', lines: [{ t: 'This is a flower.', vi: 'Đây là một bông hoa.', file: 'f.mp3' }] };
   const store = async (file) => `key:${file}`;
+  assert.deepEqual(await addPack(state, pack, async (file) => (file === 'f.mp3' ? null : `key:${file}`)), ['key:s.mp3'], 'a failed file: the saved ones are handed back');
+  assert.deepEqual([state.myVoice, state.voicePack, state.settings.useMyVoice], [null, null, false], 'nothing changes, so the next visit tries again');
   assert.deepEqual(await addPack(state, pack, store), [], 'every file is used and nothing is displaced');
   assert.equal(state.settings.useMyVoice, true);
   assert.equal(state.myVoice.sample, 'key:s.mp3');

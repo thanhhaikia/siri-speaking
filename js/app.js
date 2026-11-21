@@ -78,7 +78,7 @@ render();
   try {
     const dir = 'audio/my-voice/', res = await fetch(`${dir}index.json`);
     if (!res.ok) return;
-    const store = async (file) => { const r = await fetch(dir + file); return r.ok ? saveAudio(await r.blob()) : null; };
+    const store = async (file) => { try { const r = await fetch(dir + file); return r.ok ? await saveAudio(await r.blob()) : null; } catch { return null; } };
     const pack = await res.json();
     if (app.state.voicePack === pack.id) return;
     (await addPack(app.state, pack, store)).forEach(deleteAudio);
