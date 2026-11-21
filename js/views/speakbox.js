@@ -53,7 +53,8 @@ export function speakBox(host, app, { maxSec = 12, autoStop = true, onStart, onT
     if (wantText) {
       sr = listen({ lang: app.lang(), continuous: !autoStop, maxSec, onInterim: (text) => { interim.textContent = text; } });
       srDone = sr.promise.then((ok) => ({ ok }), (err) => ({ err }));
-      srDone.then((r) => { if (phase === 'rec' && (autoStop || r.err)) (r.err && !recorder ? fail(r.err) : stop()); });
+      // A transcription error must not end a working recording: the learner stops it, or silence does.
+      srDone.then((r) => { if (phase !== 'rec') return; if (r.err) { if (!recorder) fail(r.err); } else if (autoStop) stop(); });
     }
     phase = 'rec'; show();
     t0 = Date.now();
