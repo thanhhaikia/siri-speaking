@@ -95,7 +95,7 @@ export function linePractice(host, app, { item, tip = null, shadow = false, kind
         keep.addEventListener('click', async () => {
           const audio = await saveAudio(r.blob);
           if (!audio) return toast('This browser could not save the recording.');
-          addRecording(app.state, { audio, text: item.t }).forEach(deleteAudio);
+          addRecording(app.state, { audio, text: item.t, vi: item.vi }).forEach(deleteAudio);
           app.save();
           keep.textContent = `✓ Saved in ${app.state.myVoice.name}`;
           keep.disabled = true;

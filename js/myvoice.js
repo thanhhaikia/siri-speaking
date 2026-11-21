@@ -19,7 +19,7 @@ export function addRecording(state, { name, audio = null, text = '', vi = '' }) 
   const before = keys(v), k = normalizeText(text);
   if (name) v.name = name;
   if (audio) {
-    if (k) { v.clips[k] = audio; (v.lines ||= {})[k] = { t: text.trim(), vi }; }
+    if (k) { v.clips[k] = audio; (v.lines ||= {})[k] = { t: text.trim(), vi: vi || v.lines[k]?.vi || '' }; }
     if (!k || !v.sample) v.sample = audio;
   }
   const after = keys(v);

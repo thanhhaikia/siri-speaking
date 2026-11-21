@@ -172,6 +172,8 @@ test('my voice: the bundled voice pack is added once and stays deleted', async (
   assert.equal(state.myVoice.sample, 'key:s.mp3');
   assert.equal(clipFor(state, 'this is a flower'), 'key:f.mp3');
   assert.deepEqual(voiceLines(state), [{ t: 'This is a flower.', vi: 'Đây là một bông hoa.', type: 'sentence', own: true }]);
+  assert.deepEqual(addRecording(state, { audio: 'take2', text: 'This is a flower.' }), ['key:f.mp3']);
+  assert.equal(voiceLines(state)[0].vi, 'Đây là một bông hoa.', 'a new take keeps the translation');
   removeMyVoice(state);
   await addPack(state, pack, store);
   assert.equal(state.myVoice, null, 'not added a second time');
