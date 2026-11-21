@@ -16,6 +16,7 @@ Any static file server works too, for example `python3 -m http.server 8080`. The
 - **Practice today**: one button on Home that starts the first unfinished task of the day (three tasks, a few minutes each). A plain day streak, no points.
 - **Role-play**: three scripted conversations (restaurant, daily small talk, workplace update), four turns each. For every turn you answer, hear your recording, repeat one focus phrase with one tip, then answer again with the text hidden. Each new day you return, one turn changes (the waiter asks "Sorry, did you say two or three?").
 - **Sound drills and shadowing**: 25 lessons on the sounds Vietnamese speakers find hardest (/θ/, /ð/, final consonants, /s/ vs /ʃ/, -s and -ed endings, stress), with IPA and stress guides.
+- **Free talk**: speak for 30–60 seconds on a topic. No scores: you get "Here's what the app heard" and "Here's one thing to practice".
 - **My deck**: one tap saves a hard phrase with your recording and its Vietnamese meaning. The next day you see the Vietnamese situation first, try it, then reveal the English and both recordings.
 - **Weekly voice check**: save one line, say it again a week later, play both back and answer one concrete question ("Can you hear the final s in two parts?").
 
@@ -40,6 +41,7 @@ js/speech.js         model voice and optional speech recognition
 js/match.js          "what the browser heard" and accepted replies
 js/scoring.js, js/phonics.js   text alignment and likely-cause hints
 js/dialogue.js, js/plan.js     daily conversation version and today's tasks
+js/freetalk.js       free-talk topics and the single practice suggestion
 js/content/          lessons, scenarios, phrases, tips, voice-check lines (all original)
 js/views/            one file per screen
 tests/               unit tests

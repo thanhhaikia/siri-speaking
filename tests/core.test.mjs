@@ -112,3 +112,19 @@ test('seed content', () => {
   assert.equal(new Set(VOCAB.map((v) => v.w)).size, VOCAB.length);
   assert.equal(SCENARIOS.length, 3);
 });
+
+test('free talk gives exactly one thing to practice, never scores', async () => {
+  const { oneThing, countFillers, hardWord } = await import('../js/freetalk.js');
+  assert.equal(oneThing({ transcript: null }).kind, 'listen');
+  assert.equal(oneThing({ transcript: 'I like coffee' }).kind, 'longer');
+  assert.equal(countFillers('um I um think uh you know it is um fine').total, 5);
+  const long = 'this morning I woke up early and made some coffee before going to the office by bus';
+  assert.equal(oneThing({ transcript: `um ${long} um and uh it was fine` }).kind, 'fillers');
+  assert.equal(oneThing({ transcript: long, stats: { totalSec: 20, pauses: 9 } }).kind, 'pauses');
+  assert.equal(oneThing({ transcript: `${long} and I am agree with my manager` }).drill, 'i agree');
+  assert.deepEqual(hardWord('we finished the three reports'), { word: 'three', id: 'th' });
+  const word = oneThing({ transcript: `${long} and I talked with my manager` });
+  assert.equal(word.kind, 'word');
+  assert.equal(word.drill, 'talked');
+  for (const r of [word, oneThing({ transcript: long })]) assert.deepEqual(Object.keys(r).filter((k) => /score|pct/.test(k)), []);
+});

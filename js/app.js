@@ -7,7 +7,7 @@ import { $, $$ } from './ui.js';
 const routes = {
   '': ['home', 'home'], welcome: ['onboarding', null], practice: ['practice', 'practice'],
   drill: ['lines', null], shadow: ['lines', null], talk: ['talk', 'talk'],
-  deck: ['deck', 'deck'], voice: ['voice', null], me: ['profile', 'me'],
+  free: ['free', null], deck: ['deck', 'deck'], voice: ['voice', null], me: ['profile', 'me'],
 };
 
 export const app = {
