@@ -63,7 +63,7 @@ export function linePractice(host, app, { item, tip = null, shadow = false, kind
       if (pt) noteSound(app.state, pt.id);
       app.save();
       out.innerHTML = `<div class="stack">
-        <div class="row center">${r.url ? '<button class="btn sm ghost" data-me>▶ My voice</button>' : ''}<button class="btn sm ghost" data-model>🔊 Model</button></div>
+        <div class="row center">${r.blob ? '<button class="btn sm ghost" data-me>▶ My voice</button>' : ''}<button class="btn sm ghost" data-model>🔊 Model</button></div>
         ${match ? `${wordsHtml(match)}
           <p class="center"><span class="pct">${match.heard} / ${match.total}</span><br><span class="muted small">words heard (${match.pct}%)${vi('số từ trình duyệt nghe được')}</span></p>
           <div class="heard-box small">Here's what the app heard: <q>${esc(match.transcript)}</q></div>
@@ -71,11 +71,11 @@ export function linePractice(host, app, { item, tip = null, shadow = false, kind
           ${LEGEND}`
     : `<div class="note">${r.note ? `${esc(r.note.en)} ` : ''}Play your voice, then the model. Do they sound close?${vi('Hãy nghe giọng của bạn rồi nghe giọng mẫu. Hai giọng có gần giống nhau không?')}</div>`}
         <div class="row center" data-save></div></div>`;
-      $('[data-me]', out)?.addEventListener('click', () => playAudio(r.url));
+      $('[data-me]', out)?.addEventListener('click', () => playAudio(r.blob));
       $('[data-model]', out).addEventListener('click', () => app.say(item.t));
       if (item.vi || tip) saveButton($('[data-save]', out), app, { en: item.t, vi: item.vi || tip?.vi || '', tip: tip?.vi || '' }, () => last?.blob);
       onAttempt?.({ pct: match ? match.pct : null, ok: true });
-      if (r.url && shadow) playAudio(r.url);
+      if (r.blob && shadow) playAudio(r.blob);
     },
   });
   if (shadow) app.say(item.t);

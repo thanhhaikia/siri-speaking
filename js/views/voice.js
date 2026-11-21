@@ -63,7 +63,7 @@ export default function voice(root, app, [mode]) {
           markDone(state, 'voice'); app.save(); app.go('#/me');
         }));
       }
-      $('[data-now]', out).addEventListener('click', () => playAudio(take.url));
+      $('[data-now]', out).addEventListener('click', () => playAudio(take.blob));
     },
   });
   return () => part?.destroy();

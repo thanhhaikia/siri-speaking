@@ -12,7 +12,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 /**
  * @param {HTMLElement} host
  * @param {{maxSec?: number, autoStop?: boolean, onStart?: () => void, onTick?: (sec: number) => void,
- *   onResult: (r: {url: string|null, blob: Blob|null, stats: object|null, quiet: boolean, alternatives: string[]|null, typed: boolean, note: object|null}) => void}} opts
+ *   onResult: (r: {blob: Blob|null, stats: object|null, quiet: boolean, alternatives: string[]|null, typed: boolean, note: object|null}) => void}} opts
  *   alternatives is null when nothing was transcribed.
  */
 export function speakBox(host, app, { maxSec = 12, autoStop = true, onStart, onTick, onResult }) {
@@ -68,7 +68,7 @@ export function speakBox(host, app, { maxSec = 12, autoStop = true, onStart, onT
     phase = 'busy'; show();
     clearTimeout(timer); clearInterval(ticker);
     sr?.stop();
-    const audio = recorder ? await recorder.stop() : { blob: null, url: null, stats: null };
+    const audio = recorder ? await recorder.stop() : { blob: null, stats: null };
     const res = srDone ? await Promise.race([srDone, sleep(3000).then(() => ({ err: new Error('timeout') }))]) : null;
     recorder = sr = srDone = null;
     if (!alive) return;
@@ -101,7 +101,7 @@ export function speakBox(host, app, { maxSec = 12, autoStop = true, onStart, onT
     if (!text || phase !== 'idle') return;
     input.value = '';
     interim.textContent = '';
-    onResult({ blob: null, url: null, stats: null, quiet: false, alternatives: [text], typed: true, note: null });
+    onResult({ blob: null, stats: null, quiet: false, alternatives: [text], typed: true, note: null });
   });
   show();
 

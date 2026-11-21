@@ -51,10 +51,10 @@ function review(root, app, cards) {
     const reveal = (r) => {
       const match = r && !r.quiet ? matchLine(card.en, r.alternatives) : null;
       out.innerHTML = `<div class="stack">${r?.quiet ? QUIET : ''}<div class="target">${esc(card.en)}</div>${card.tip ? `<p class="center small muted" lang="vi">${esc(card.tip)}</p>` : ''}
-        <div class="row center"><button class="btn sm ghost" data-model>🔊 Model</button>${r?.url ? '<button class="btn sm ghost" data-now>▶ Me today</button>' : ''}${card.audio ? '<button class="btn sm ghost" data-old>▶ Me when I saved it</button>' : ''}</div>
+        <div class="row center"><button class="btn sm ghost" data-model>🔊 Model</button>${r?.blob ? '<button class="btn sm ghost" data-now>▶ Me today</button>' : ''}${card.audio ? '<button class="btn sm ghost" data-old>▶ Me when I saved it</button>' : ''}</div>
         ${match ? `${wordsHtml(match)}<div class="heard-box small">Here's what the app heard: <q>${esc(match.transcript)}</q></div>${LEGEND}` : ''}</div>`;
       $('[data-model]', out).addEventListener('click', () => app.say(card.en));
-      $('[data-now]', out)?.addEventListener('click', () => playAudio(r.url));
+      $('[data-now]', out)?.addEventListener('click', () => playAudio(r.blob));
       $('[data-old]', out)?.addEventListener('click', async () => playAudio(await loadAudio(card.audio)));
       $('[data-foot]', root).innerHTML = '<button class="btn ghost" data-again>Again tomorrow</button><button class="btn" data-got>Got it</button>';
       const done = (got) => { reviewCard(app.state, card.id, got); app.save(); i++; show(); };

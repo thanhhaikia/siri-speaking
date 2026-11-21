@@ -25,7 +25,7 @@ export const isMobile = () => typeof navigator !== 'undefined' && /Android|iPhon
  * Start recording. Rejects with the getUserMedia error when the microphone is unavailable.
  * @param {{onLevel?: (rms: number) => void, onSilence?: () => void, silenceSec?: number}} opts
  *   onSilence fires once when the learner has spoken and then stayed silent for silenceSec.
- * @returns {Promise<{stop(): Promise<{blob: Blob|null, url: string|null, stats: object}>}>}
+ * @returns {Promise<{stop(): Promise<{blob: Blob|null, stats: object}>}>}
  */
 export async function startRecording({ onLevel, onSilence, silenceSec = 1.6 } = {}) {
   if (!recorderSupported()) throw new Error('unsupported');
@@ -70,7 +70,7 @@ export async function startRecording({ onLevel, onSilence, silenceSec = 1.6 } = 
           const blob = chunks.length ? new Blob(chunks, { type: recorder.mimeType || 'audio/webm' }) : null;
           // Without Web Audio there are no loudness frames: assume the recording is usable.
           const stats = frames.length ? analyzeFrames(frames) : { peak: 1, voicedSec: 1, totalSec: 0, pauses: 0, unmeasured: true };
-          resolve({ blob, url: blob ? URL.createObjectURL(blob) : null, stats });
+          resolve({ blob, stats });
         };
         if (recorder.state !== 'inactive') { recorder.onstop = finish; recorder.stop(); } else finish();
       });
@@ -79,17 +79,22 @@ export async function startRecording({ onLevel, onSilence, silenceSec = 1.6 } = 
   };
 }
 
-let player = null;
-/** Play a recording (object URL or Blob). Resolves when playback ends. */
-export function playAudio(src) {
+let player = null, playerUrl = null;
+/** Stop playback and release the one object URL in use. */
+export function stopAudio() {
+  player?.pause();
+  if (playerUrl) URL.revokeObjectURL(playerUrl);
+  player = playerUrl = null;
+}
+/** Play a recording. Resolves when playback ends. */
+export function playAudio(blob) {
   return new Promise((resolve) => {
-    if (!src) return resolve(false);
-    player?.pause();
-    const url = typeof src === 'string' ? src : URL.createObjectURL(src);
-    player = new Audio(url);
+    stopAudio();
+    if (!blob) return resolve(false);
+    playerUrl = URL.createObjectURL(blob);
+    player = new Audio(playerUrl);
     player.onended = () => resolve(true);
     player.onerror = () => resolve(false);
     player.play().catch(() => resolve(false));
   });
 }
-export const stopAudio = () => player?.pause();
