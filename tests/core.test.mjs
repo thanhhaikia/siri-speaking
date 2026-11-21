@@ -1,0 +1,114 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { matchLine, practiceTip, replyDone } from '../js/match.js';
+import { analyzeFrames, tooQuiet } from '../js/recorder.js';
+import { buildDialogue, dialogueSteps, versionCount, todayScenario } from '../js/dialogue.js';
+import { SCENARIOS } from '../js/content/scenarios.js';
+import { LESSONS } from '../js/content/lessons.js';
+import { VOCAB } from '../js/content/vocab.js';
+import { defaultState, addToDeck, dueCards, reviewCard, markDone, finishScenario, scenarioVisit, voiceStatus, finishLesson } from '../js/store.js';
+import { bumpStreak, liveStreak, addDays } from '../js/days.js';
+import { todayTasks, shadowSet } from '../js/plan.js';
+
+test('exact lines: words are labelled by what the browser heard', () => {
+  const m = matchLine('Three iced teas, please.', ['tree iced teas please']);
+  assert.deepEqual(m.words.map((w) => w.status), ['different', 'heard', 'heard', 'heard']);
+  assert.equal(m.pct, 75);
+  assert.equal(practiceTip(m).id, 'th');
+  assert.equal(matchLine('three', ['']), null, 'no transcript, no result');
+  assert.equal(matchLine('I think so', ['I think']).words[2].status, 'unclear');
+  assert.equal(practiceTip(matchLine('three', ['three'])), null);
+});
+
+test('the best of several transcripts is used', () => {
+  assert.equal(matchLine('three', ['tree', 'three']).pct, 100);
+});
+
+test('open replies: any accepted idea completes the turn, wording is free', () => {
+  const accept = SCENARIOS[0].turns[0].accept;
+  for (const r of ['Three, please.', 'A table for three', 'there are 3 of us']) assert.equal(replyDone(accept, [r]).done, true, r);
+  assert.equal(replyDone(accept, ['two please']).done, false);
+  assert.equal(replyDone(accept, []), null);
+});
+
+test('every sample reply of every version is accepted', () => {
+  for (const s of SCENARIOS) {
+    for (let v = 0; v < versionCount(s); v++) {
+      const { turns } = buildDialogue(s, v);
+      assert.equal(turns.length, 4);
+      for (const t of turns) {
+        assert.ok(t.replies.length >= 3 && t.focus.tip.vi && t.task);
+        for (const r of t.replies) assert.equal(replyDone(t.accept, [r]).done, true, `${s.id}: ${r}`);
+      }
+    }
+  }
+});
+
+test('the conversation changes slightly on the next day', () => {
+  const s = SCENARIOS[0];
+  const day1 = buildDialogue(s, 0), day2 = buildDialogue(s, 1);
+  assert.equal(day1.twist, null);
+  assert.equal(day2.turns[1].say, 'Sorry, did you say two or three?');
+  assert.equal(day2.turns.filter((t, i) => t.say !== day1.turns[i].say).length, 1);
+  assert.deepEqual(dialogueSteps(day1.turns).slice(0, 3).map((x) => [x.kind, !!x.hidden]), [['reply', false], ['focus', false], ['reply', true]]);
+  const st = defaultState();
+  st.profile = { focus: 'daily' };
+  finishScenario(st, 'restaurant', '2026-01-01');
+  assert.equal(scenarioVisit(st, 'restaurant', '2026-01-01'), 0, 'same day: same version');
+  assert.equal(scenarioVisit(st, 'restaurant', '2026-01-02'), 1);
+  assert.equal(todayScenario(st, '2026-01-02').id, 'restaurant');
+  st.profile.focus = 'work';
+  assert.equal(todayScenario(st, '2026-01-02').id, 'work-update');
+});
+
+test('quiet recordings are detected', () => {
+  assert.equal(tooQuiet(analyzeFrames(Array(40).fill(0.001))), true);
+  const speech = [...Array(10).fill(0.001), ...Array(12).fill(0.2), ...Array(10).fill(0.001), ...Array(8).fill(0.15)];
+  const stats = analyzeFrames(speech);
+  assert.equal(tooQuiet(stats), false);
+  assert.equal(stats.pauses, 1);
+  assert.equal(stats.voicedSec, 1);
+});
+
+test('retry deck: saved today, due tomorrow, spaced further after "got it"', () => {
+  const st = defaultState();
+  const card = addToDeck(st, { en: 'Three, please.', vi: 'Nhóm bạn có ba người.' }, '2026-01-01');
+  addToDeck(st, { en: 'Three, please.', vi: 'x' }, '2026-01-01');
+  assert.equal(st.deck.length, 1);
+  assert.equal(dueCards(st, '2026-01-01').length, 0);
+  assert.equal(dueCards(st, '2026-01-02').length, 1);
+  assert.equal(reviewCard(st, card.id, true, '2026-01-02').due, '2026-01-05');
+  assert.equal(reviewCard(st, card.id, false, '2026-01-05').due, '2026-01-06');
+});
+
+test('streak and weekly voice check', () => {
+  let s = bumpStreak({ count: 0, last: null, best: 0 }, '2026-01-01');
+  s = bumpStreak(s, '2026-01-02');
+  assert.equal(s.count, 2);
+  assert.equal(liveStreak(s, '2026-01-04'), 0);
+  assert.equal(bumpStreak(s, '2026-01-04').count, 1);
+  const st = defaultState();
+  assert.equal(voiceStatus(st, '2026-01-01').stage, 'record');
+  st.voice = { line: 0, first: { day: '2026-01-01', audio: 'k' }, history: [] };
+  assert.deepEqual(voiceStatus(st, '2026-01-03'), { stage: 'wait', daysLeft: 5 });
+  assert.equal(voiceStatus(st, addDays('2026-01-01', 7)).stage, 'compare');
+});
+
+test("today's plan has three tasks and tracks completion", () => {
+  const st = defaultState();
+  st.profile = { focus: 'daily' };
+  const tasks = todayTasks(st, '2026-01-01');
+  assert.deepEqual(tasks.map((t) => t.kind), ['talk', 'drill', 'voice']);
+  markDone(st, 'talk', '2026-01-01');
+  assert.equal(todayTasks(st, '2026-01-01')[0].done, true);
+  assert.equal(finishLesson(st, tasks[1].id, [100, 50, null], '2026-01-01'), 75);
+  assert.equal(shadowSet('2026-01-01').length, 5);
+});
+
+test('seed content', () => {
+  assert.ok(LESSONS.length >= 25);
+  for (const l of LESSONS) assert.ok(l.items.length >= 4 && l.tip && l.titleVi, l.id);
+  assert.ok(VOCAB.length >= 50);
+  assert.equal(new Set(VOCAB.map((v) => v.w)).size, VOCAB.length);
+  assert.equal(SCENARIOS.length, 3);
+});
