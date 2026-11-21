@@ -21,7 +21,8 @@ export function saveButton(host, app, card, getBlob) {
   btn.type = 'button';
   const paint = () => { const on = inDeck(app.state, card.en); btn.className = `btn sm ghost ${on ? 'on' : ''}`; btn.innerHTML = on ? '★ Saved to my deck' : '☆ Save to my deck'; };
   btn.addEventListener('click', async () => {
-    const audio = await saveAudio(getBlob?.() || null);
+    // Saving a phrase again overwrites its earlier recording instead of leaving it behind.
+    const audio = await saveAudio(getBlob?.() || null, app.state.deck.find((c) => c.en === card.en)?.audio || undefined);
     addToDeck(app.state, { ...card, audio });
     app.save();
     paint();
