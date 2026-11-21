@@ -6,11 +6,13 @@ import { buildDialogue, dialogueSteps, versionCount, todayScenario } from '../js
 import { SCENARIOS } from '../js/content/scenarios.js';
 import { LESSONS } from '../js/content/lessons.js';
 import { VOCAB } from '../js/content/vocab.js';
+import { VOICE_LINES } from '../js/content/voicelines.js';
 import { defaultState, addToDeck, dueCards, reviewCard, markDone, finishScenario, scenarioVisit, voiceStatus, finishLesson } from '../js/store.js';
 import { bumpStreak, liveStreak, addDays } from '../js/days.js';
 import { todayTasks, shadowSet } from '../js/plan.js';
 import { chooseVoice } from '../js/speech.js';
 import { addRecording, clipFor, clipCount, removeMyVoice, addPack, voiceLines } from '../js/myvoice.js';
+import { scriptGroups, scriptProgress, extraLines } from '../js/voicescript.js';
 
 test('exact lines: words are labelled by what the browser heard', () => {
   const m = matchLine('Three iced teas, please.', ['tree iced teas please']);
@@ -184,4 +186,15 @@ test('my voice: the bundled voice pack is added once and stays deleted', async (
   const two = { ...pack, lines: [...pack.lines, { t: 'It is close.', vi: 'Nó ở gần.', file: 'c.mp3' }] };
   assert.deepEqual(await addPack(mine, two, store), ['key:s.mp3', 'key:f.mp3'], 'unused pack files are handed back');
   assert.deepEqual([mine.myVoice.name, mine.myVoice.sample, clipFor(mine, 'This is a flower.'), clipFor(mine, 'It is close.')], ['Hai', 'a1', 'a2', 'key:c.mp3']);
+});
+
+test('my voice script: every model line is listed once, and progress counts the recorded ones', () => {
+  const all = scriptGroups().flatMap((g) => g.items.map((it) => it.t)), state = defaultState();
+  const total = scriptProgress(state).total;
+  assert.equal(total, all.length, 'no line is listed twice');
+  for (const t of ['think', 'Good evening! How many people?', 'Three, please.', 'reservation', VOICE_LINES[0].t, VOCAB[0].ex]) assert.ok(all.includes(t), t);
+  addRecording(state, { audio: 'a1', text: 'Think' });
+  addRecording(state, { audio: 'a2', text: 'This is a flower.' });
+  assert.deepEqual(scriptProgress(state), { done: 1, total });
+  assert.deepEqual(extraLines(state).map((l) => l.t), ['This is a flower.'], 'own sentences outside the lessons form the shadowing set');
 });

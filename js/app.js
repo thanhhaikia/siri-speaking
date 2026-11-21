@@ -10,7 +10,7 @@ import { $, $$, toast } from './ui.js';
 const routes = {
   '': ['home', 'home'], welcome: ['onboarding', null], practice: ['practice', 'practice'],
   drill: ['lines', null], shadow: ['lines', null], talk: ['talk', 'talk'],
-  free: ['free', null], deck: ['deck', 'deck'], voice: ['voice', null], me: ['profile', 'me'],
+  free: ['free', null], deck: ['deck', 'deck'], voice: ['voice', null], myvoice: ['myvoice', null], me: ['profile', 'me'],
 };
 
 let sayTurn = 0, noted = false; // noted: the "no recording yet" message is shown once per screen

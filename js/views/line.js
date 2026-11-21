@@ -3,7 +3,7 @@ import { speakBox } from './speakbox.js';
 import { matchLine, practiceTip, LABELS } from '../match.js';
 import { playAudio } from '../recorder.js';
 import { saveAudio, deleteAudio } from '../audiodb.js';
-import { addRecording, clipFor, clipCount } from '../myvoice.js';
+import { addRecording, clipFor } from '../myvoice.js';
 import { browserVoiceName } from './voicepicker.js';
 import { addToDeck, inDeck, logAttempt, noteSound } from '../store.js';
 import { ipaFor } from '../content/ipa.js';
@@ -59,7 +59,7 @@ export function linePractice(host, app, { item, tip = null, shadow = false, kind
   const voiceNote = () => {
     const el = $('[data-voice-note]', host), my = (app.state.settings.useMyVoice || item.own) && app.state.myVoice;
     el.hidden = !my;
-    if (my) el.innerHTML = clipFor(app.state, item.t) ? `Listen plays your recording (${esc(my.name)}).` : `No recording of this line in ${esc(my.name)} yet, so Listen uses ${esc(browserVoiceName(app))}.${clipCount(app.state) ? ` <a href="#/shadow/mine">Your ${clipCount(app.state)} recorded sentences</a>` : ''}${vi('Chưa có bản ghi câu này bằng giọng của bạn nên nút Listen dùng giọng của trình duyệt.')}`;
+    if (my) el.innerHTML = clipFor(app.state, item.t) ? `Listen plays your recording (${esc(my.name)}).` : `No recording of this line in ${esc(my.name)} yet, so Listen uses ${esc(browserVoiceName(app))}. <a href="#/myvoice">Record the lesson lines</a>${vi('Chưa có bản ghi câu này bằng giọng của bạn nên nút Listen dùng giọng của trình duyệt.')}`;
   };
   voiceNote();
   document.addEventListener('voicechange', voiceNote);

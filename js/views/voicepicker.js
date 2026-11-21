@@ -37,8 +37,8 @@ export function openVoicePicker(app, upload = false) {
     body.innerHTML = `<h2 style="margin-top:0">Model voice${vi('Chạm vào một giọng để nghe thử và dùng cho mọi bài.')}</h2><div class="voices">
       <h3>Your own voice</h3>
       ${my ? `<div class="choices"><button type="button" class="choice ${mine(app) ? 'on' : ''}" data-mine aria-pressed="${!!mine(app)}"><span class="ic">${mine(app) ? '✓' : '▶'}</span><span><b>${esc(my.name)}</b><span class="muted small">Your recordings · ${n} sentence${n === 1 ? '' : 's'}</span></span></button></div>
-        <p class="row" style="margin-top:8px"><button type="button" class="btn sm ghost" data-upload>＋ Add a recording / rename</button><button type="button" class="btn sm plain" data-remove>Delete</button></p>`
-    : '<button type="button" class="btn sm ghost" data-upload>⬆ Upload my voice</button>'}
+        <p class="row" style="margin-top:8px"><a class="btn sm ghost" href="#/myvoice">🎙 Record the lesson lines</a><button type="button" class="btn sm ghost" data-upload>＋ Add a recording / rename</button><button type="button" class="btn sm plain" data-remove>Delete</button></p>`
+    : '<p class="row"><button type="button" class="btn sm ghost" data-upload>⬆ Upload my voice</button><a class="btn sm ghost" href="#/myvoice">🎙 Record the lesson lines</a></p>'}
       <p class="muted small" style="margin-top:8px">Plays your recordings as they are. It cannot read new sentences in your voice.${vi('Chỉ phát lại đúng bản ghi âm của bạn. Không thể đọc câu mới bằng giọng của bạn.')}</p>
       ${voices.length ? GROUPS.map(([accent, title]) => {
     const group = voices.filter((v) => v.accent === accent);
