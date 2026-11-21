@@ -2,8 +2,8 @@
 import { load, save } from './store.js';
 import { speak, stopSpeaking, srSupported, onVoicesChanged } from './speech.js';
 import { isMobile, stopAudio, playAudio } from './recorder.js';
-import { loadAudio } from './audiodb.js';
-import { clipFor } from './myvoice.js';
+import { loadAudio, saveAudio, deleteAudio } from './audiodb.js';
+import { clipFor, addPack } from './myvoice.js';
 import { openVoicePicker, showVoiceName, browserVoiceName } from './views/voicepicker.js';
 import { $, $$, toast } from './ui.js';
 
@@ -20,12 +20,12 @@ export const app = {
   save() { save(app.state); },
   go(hash) { if (location.hash === hash) render(); else location.hash = hash; },
   lang: () => app.state.profile?.accent || 'en-US',
-  /** Play the model voice: the learner's own recording of this sentence when "My voice" is on and has one, else the browser voice. */
-  async say(text, { slow = false } = {}) {
+  /** Play the model voice: the learner's own recording of this sentence when "My voice" is on (or `own` asks for it) and has one, else the browser voice. */
+  async say(text, { slow = false, own = false } = {}) {
     const s = app.state.settings, turn = ++sayTurn;
     stopAudio();
     stopSpeaking();
-    if (s.useMyVoice && app.state.myVoice && !slow) {
+    if ((s.useMyVoice || own) && app.state.myVoice && !slow) {
       const blob = await loadAudio(clipFor(app.state, text));
       if (turn !== sayTurn) return false;
       if (blob) { if (await playAudio(blob)) return true; } else if (!noted && !$('[data-voice-note]')) {
@@ -72,3 +72,17 @@ document.addEventListener('click', (e) => { const b = e.target.closest('[data-vo
 onVoicesChanged(() => showVoiceName(app));
 window.addEventListener('hashchange', render);
 render();
+
+// A voice pack shipped with the app (audio/my-voice/) is added to "My voice" on the first visit.
+(async () => {
+  try {
+    const dir = 'audio/my-voice/', res = await fetch(`${dir}index.json`);
+    if (!res.ok) return;
+    const store = async (file) => { const r = await fetch(dir + file); return r.ok ? saveAudio(await r.blob()) : null; };
+    const pack = await res.json();
+    if (app.state.voicePack === pack.id) return;
+    (await addPack(app.state, pack, store)).forEach(deleteAudio);
+    app.save();
+    if ($('#view').classList.contains('focus')) showVoiceName(app); else render();
+  } catch { /* no pack, or offline: the browser voices still work */ }
+})();

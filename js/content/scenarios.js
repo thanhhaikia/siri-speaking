@@ -189,6 +189,186 @@ export const SCENARIOS = [
       },
     ],
   },
+  {
+    id: 'hotel', icon: '🏨', color: '#8b5cf6', focus: 'daily', partner: 'Receptionist', partnerVi: 'Lễ tân',
+    title: 'Checking in at a hotel', titleVi: 'Nhận phòng khách sạn',
+    intro: 'You arrive at your hotel after a long flight.', introVi: 'Bạn đến khách sạn sau một chuyến bay dài.',
+    turns: [
+      {
+        say: 'Good afternoon. Do you have a reservation?', vi: 'Chào quý khách. Quý khách đã đặt phòng chưa ạ?',
+        task: 'Bạn đã đặt phòng, tên người đặt là Nguyen.',
+        replies: ['Yes, I have a reservation under Nguyen.', 'Yes, I booked a room. The name is Nguyen.', 'I do. It is under the name Nguyen.'], accept: [['reservation'], ['booked'], ['booking'], ['name'], ['nguyen'], ['yes']],
+        focus: f('reservation', '/ˌrezərˈveɪʃən/', 'res·er·VA·tion', 'Stress the third part and say /ʃ/ in "-tion": res-er-VAY-shun.', 'Nhấn âm tiết thứ ba và đọc "-tion" với âm /ʃ/: res-er-VAY-shun.'),
+      },
+      {
+        say: 'How many nights will you be staying?', vi: 'Quý khách ở mấy đêm ạ?',
+        task: 'Bạn ở ba đêm.',
+        replies: ['Three nights, please.', "I'm staying for three nights.", 'Three nights, until Friday.'], accept: [['three']],
+        focus: f('three nights', '/θriː naɪts/', 'THREE NIGHTS', 'End "nights" with /ts/. Without it, it sounds like one night.', 'Kết thúc "nights" bằng /ts/. Thiếu âm này sẽ nghe như chỉ một đêm.'),
+      },
+      {
+        say: 'Would you like a room with a city view or a garden view?', vi: 'Quý khách muốn phòng nhìn ra thành phố hay nhìn ra vườn?',
+        task: 'Bạn chọn phòng nhìn ra vườn cho yên tĩnh.',
+        replies: ['A garden view, please.', "I'd like the garden view. It's quieter.", 'The garden view sounds good.'], accept: [['garden']],
+        focus: f('garden view', '/ˈɡɑːrdn vjuː/', 'GAR·den VIEW', 'Start "view" with /v/: top teeth touch the bottom lip. It is not /w/.', 'Bắt đầu "view" bằng /v/: răng trên chạm môi dưới. Không đọc thành /w/.'),
+      },
+      {
+        say: 'Here is your key. Breakfast is from six to ten. Anything else?', vi: 'Chìa khóa của quý khách đây. Bữa sáng từ sáu đến mười giờ. Quý khách cần gì nữa không ạ?',
+        task: 'Hỏi mật khẩu wifi.',
+        replies: ['Yes, what is the wifi password?', 'Could I have the wifi password, please?', 'How do I connect to the wifi?'], accept: [['wifi'], ['wi', 'fi'], ['password'], ['internet']],
+        focus: f('password', '/ˈpæswɜːrd/', 'PASS·word', 'Stress the first part and finish with a clear /d/: PASS-word.', 'Nhấn âm tiết đầu và bật rõ âm /d/ ở cuối: PASS-word.'),
+      },
+    ],
+    twists: [
+      {
+        at: 1, note: 'The receptionist has the wrong number of nights.', noteVi: 'Hôm nay lễ tân ghi nhầm số đêm.',
+        turn: {
+          say: 'I have you here for two nights. Is that right?', vi: 'Tôi thấy quý khách đặt hai đêm. Có đúng không ạ?',
+          task: 'Sửa lại: bạn đã đặt ba đêm.',
+          replies: ['No, I booked three nights.', "Actually, it's three nights.", 'That should be three nights, not two.'], accept: [['three']],
+          focus: f('I booked three nights', '/aɪ bʊkt θriː naɪts/', 'I BOOKED THREE NIGHTS', '"Booked" is one syllable ending in /kt/ — not "book-ed".', '"Booked" chỉ có một âm tiết, kết thúc bằng /kt/ — không đọc thành "book-ed".'),
+        },
+      },
+      {
+        at: 2, note: 'Only second-floor rooms are left.', noteVi: 'Hôm nay chỉ còn phòng ở tầng hai.',
+        turn: {
+          say: "I'm sorry, we only have rooms on the second floor. Is that okay?", vi: 'Xin lỗi, chúng tôi chỉ còn phòng ở tầng hai. Như vậy được không ạ?',
+          task: 'Đồng ý, và hỏi có thang máy không.',
+          replies: ["That's fine. Is there an elevator?", 'No problem. Do you have an elevator?', 'Sure. Is there a lift?'], accept: [['elevator'], ['lift'], ['fine'], ['no', 'problem'], ['sure'], ['okay'], ['ok']],
+          focus: f('elevator', '/ˈelɪveɪtər/', 'EL·e·va·tor', 'Stress the first syllable, EL-e-va-tor, and say a clear /v/.', 'Nhấn âm tiết đầu, EL-e-va-tor, và đọc rõ âm /v/.'),
+        },
+      },
+      {
+        at: 3, note: 'Your room is not ready yet.', noteVi: 'Hôm nay phòng của bạn chưa dọn xong.',
+        turn: {
+          say: 'Your room will be ready at two. Would you like to leave your bags here?', vi: 'Hai giờ phòng mới sẵn sàng. Quý khách có muốn gửi hành lý ở đây không ạ?',
+          task: 'Đồng ý gửi hành lý và cảm ơn.',
+          replies: ['Yes, please. Thank you.', "That would be great. I'll leave my bags.", 'Yes, I will leave my bags here.'], accept: [['yes'], ['bags'], ['great'], ['leave'], ['thank', 'you'], ['thanks']],
+          focus: f('leave my bags', '/liːv maɪ bæɡz/', 'LEAVE my BAGS', 'A long /iː/ in "leave" (not "live"), and /z/ at the end of "bags".', 'Âm /iː/ dài trong "leave" (khác "live"), và âm /z/ ở cuối "bags".'),
+        },
+      },
+    ],
+  },
+  {
+    id: 'directions', icon: '🧭', color: '#10b981', focus: 'daily', partner: 'Passer-by', partnerVi: 'Người đi đường',
+    title: 'Asking for directions', titleVi: 'Hỏi đường',
+    intro: 'You are in a new city and cannot find the train station. A person stops to help.', introVi: 'Bạn đang ở một thành phố lạ và không tìm thấy ga tàu. Một người dừng lại giúp bạn.',
+    turns: [
+      {
+        say: 'Hi there. You look lost. Can I help you?', vi: 'Chào bạn. Trông bạn như đang lạc đường. Tôi giúp gì được không?',
+        task: 'Hỏi đường đến ga tàu.',
+        replies: ['Yes, please. Where is the train station?', 'How do I get to the train station?', "I'm looking for the train station."], accept: [['station']],
+        focus: f('train station', '/treɪn ˈsteɪʃən/', 'TRAIN STA·tion', 'Keep /tr/ together, and say /ʃ/ in "station": STAY-shun.', 'Đọc liền /tr/, và đọc "station" với âm /ʃ/: STAY-shun.'),
+      },
+      {
+        say: 'It is about ten minutes from here. Are you walking or driving?', vi: 'Cách đây khoảng mười phút. Bạn đi bộ hay lái xe?',
+        task: 'Bạn đi bộ.',
+        replies: ["I'm walking.", 'On foot.', "I'm going to walk."], accept: [['walking'], ['walk'], ['foot']],
+        focus: f('walking', '/ˈwɔːkɪŋ/', 'WALK·ing', 'The "l" is silent: WAW-king. Round your lips for /w/.', 'Chữ "l" câm: WAW-king. Tròn môi khi đọc /w/.'),
+      },
+      {
+        say: 'Okay. Go straight, then turn left at the bank. Did you get that?', vi: 'Được rồi. Đi thẳng, rồi rẽ trái ở ngân hàng. Bạn nghe kịp không?',
+        task: 'Nhắc lại cho chắc: đi thẳng, rẽ trái ở ngân hàng.',
+        replies: ['Go straight, then turn left at the bank.', 'Straight, and left at the bank. Got it.', 'So I go straight and turn left at the bank?'], accept: [['left'], ['straight']],
+        focus: f('turn left', '/tɜːrn left/', 'TURN LEFT', 'Finish "left" with /ft/ — both sounds, not "lef".', 'Kết thúc "left" bằng /ft/ — đủ cả hai âm, không đọc thành "lef".'),
+      },
+      {
+        say: 'That is right. The station is next to the post office. You cannot miss it.', vi: 'Đúng rồi. Ga nằm cạnh bưu điện. Bạn sẽ thấy ngay.',
+        task: 'Cảm ơn người đó đã giúp.',
+        replies: ['Thank you so much!', 'Thanks for your help.', 'Great, thank you. Have a nice day!'], accept: [['thank'], ['thanks']],
+        focus: f('thanks for your help', '/θæŋks fər jər help/', 'THANKS for your HELP', '/θ/ at the start of "thanks", and /lp/ at the end of "help": tongue up for /l/, then close your lips.', '/θ/ ở đầu "thanks", và /lp/ ở cuối "help": nâng lưỡi cho /l/ rồi khép môi.'),
+      },
+    ],
+    twists: [
+      {
+        at: 1, note: 'The station is farther than you thought.', noteVi: 'Hôm nay ga tàu xa hơn bạn nghĩ.',
+        turn: {
+          say: 'It is quite far, about thirty minutes on foot. Do you want to take the bus?', vi: 'Khá xa đấy, đi bộ khoảng ba mươi phút. Bạn có muốn đi xe buýt không?',
+          task: 'Đồng ý đi xe buýt và hỏi trạm xe buýt ở đâu.',
+          replies: ['Yes. Where is the bus stop?', 'The bus is better. Where can I catch it?', 'Okay, which bus should I take?'], accept: [['bus']],
+          focus: f('bus stop', '/bʌs stɑːp/', 'BUS STOP', 'Two /s/ sounds meet: hold one long /s/, then release the /p/ at the end.', 'Hai âm /s/ gặp nhau: giữ một âm /s/ dài, rồi bật âm /p/ ở cuối.'),
+        },
+      },
+      {
+        at: 2, note: 'The way is different today.', noteVi: 'Hôm nay đường đi khác.',
+        turn: {
+          say: 'Go past the supermarket and turn right at the traffic lights. Okay?', vi: 'Đi qua siêu thị rồi rẽ phải ở đèn giao thông. Được chứ?',
+          task: 'Nhắc lại: qua siêu thị, rẽ phải ở đèn giao thông.',
+          replies: ['Past the supermarket, then right at the traffic lights.', 'So I turn right at the traffic lights?', 'Okay, right at the lights.'], accept: [['right'], ['lights'], ['supermarket']],
+          focus: f('right at the lights', '/raɪt ət ðə laɪts/', 'RIGHT at the LIGHTS', '"Right" and "lights" start differently: curl the tongue back for /r/, touch behind the top teeth for /l/.', '"Right" và "lights" có âm đầu khác nhau: /r/ cuộn lưỡi về sau, /l/ chạm đầu lưỡi sau răng trên.'),
+        },
+      },
+      {
+        at: 0, note: 'Today you are looking for a different place.', noteVi: 'Hôm nay bạn tìm một nơi khác.',
+        turn: {
+          say: 'Hello. Are you looking for something?', vi: 'Chào bạn. Bạn đang tìm gì à?',
+          task: 'Hỏi gần đây có hiệu thuốc không.',
+          replies: ['Yes. Is there a pharmacy near here?', "I'm looking for a pharmacy.", 'Where is the nearest pharmacy?'], accept: [['pharmacy'], ['drugstore'], ['chemist']],
+          focus: f('near here', '/nɪr hɪr/', 'NEAR HERE', 'Say the /h/ in "here" with a little breath, so it does not sound like "near ear".', 'Đọc âm /h/ trong "here" có bật hơi nhẹ, để không nghe thành "near ear".'),
+        },
+      },
+    ],
+  },
+  {
+    id: 'pharmacy', icon: '💊', color: '#ef4444', focus: 'daily', partner: 'Pharmacist', partnerVi: 'Dược sĩ',
+    title: 'At the pharmacy', titleVi: 'Ở hiệu thuốc',
+    intro: 'You have had a headache since this morning, so you go to a pharmacy.', introVi: 'Bạn bị đau đầu từ sáng nên ghé vào hiệu thuốc.',
+    turns: [
+      {
+        say: 'Hello. How can I help you today?', vi: 'Xin chào. Tôi giúp gì được cho bạn?',
+        task: 'Bạn bị đau đầu và cần mua thuốc.',
+        replies: ['I have a headache. Do you have something for it?', 'I need something for a headache.', 'My head hurts. What can I take?'], accept: [['headache'], ['head']],
+        focus: f('headache', '/ˈhedeɪk/', 'HEAD·ache', '"Ache" sounds like "ake": HED-ake. The "ch" is /k/.', '"Ache" đọc như "ake": HED-ake. Chữ "ch" ở đây là âm /k/.'),
+      },
+      {
+        say: 'I see. How long have you had it?', vi: 'Tôi hiểu rồi. Bạn bị bao lâu rồi?',
+        task: 'Bạn bị từ sáng nay.',
+        replies: ['Since this morning.', 'It started this morning.', 'For a few hours, since I woke up.'], accept: [['morning'], ['hours'], ['today'], ['woke']],
+        focus: f('since this morning', '/sɪns ðɪs ˈmɔːrnɪŋ/', 'SINCE this MORN·ing', '"This" starts with the voiced /ð/: tongue between the teeth. It is not /d/ or /z/.', '"This" bắt đầu bằng âm hữu thanh /ð/: lưỡi giữa hai hàm răng. Không đọc thành /d/ hay /z/.'),
+      },
+      {
+        say: 'Are you allergic to any medicine?', vi: 'Bạn có dị ứng với thuốc nào không?',
+        task: 'Bạn không dị ứng với thuốc nào.',
+        replies: ["No, I'm not allergic to anything.", 'No, I have no allergies.', 'Not that I know of.'], accept: [['no'], ['not'], ['none']],
+        focus: f('allergic', '/əˈlɜːrdʒɪk/', 'al·LER·gic', 'Stress the middle: a-LER-jik. The "g" is /dʒ/, as in "job".', 'Nhấn âm tiết giữa: a-LER-jik. Chữ "g" đọc là /dʒ/ như trong "job".'),
+      },
+      {
+        say: 'Take one tablet every six hours, after food. Do you need anything else?', vi: 'Uống một viên mỗi sáu tiếng, sau khi ăn. Bạn cần gì nữa không?',
+        task: 'Không cần gì thêm. Hỏi giá tiền.',
+        replies: ["No, that's all. How much is it?", 'That is everything. How much do I pay?', 'Nothing else, thanks. What is the price?'], accept: [['how', 'much'], ['price'], ['pay'], ['all'], ['everything'], ['nothing']],
+        focus: f('how much is it', '/haʊ mʌtʃ ɪz ɪt/', 'HOW MUCH is it', 'Link the words — "much-iz-it" — and release /tʃ/ at the end of "much".', 'Nối các từ lại: "much-iz-it", và bật rõ âm /tʃ/ cuối từ "much".'),
+      },
+    ],
+    twists: [
+      {
+        at: 0, note: 'A different problem today.', noteVi: 'Hôm nay bạn gặp vấn đề khác.',
+        turn: {
+          say: 'Good morning. What seems to be the problem?', vi: 'Chào buổi sáng. Bạn đang gặp vấn đề gì?',
+          task: 'Bạn bị đau họng và ho.',
+          replies: ['I have a sore throat and a cough.', 'My throat hurts and I keep coughing.', 'I need something for a sore throat.'], accept: [['throat'], ['cough'], ['coughing']],
+          focus: f('sore throat', '/sɔːr θroʊt/', 'SORE THROAT', '"Throat" starts with /θr/: tongue between the teeth, then pull it back for /r/. Not "troat".', '"Throat" bắt đầu bằng /θr/: lưỡi giữa hai răng rồi kéo về sau cho /r/. Không đọc thành "troat".'),
+        },
+      },
+      {
+        at: 3, note: 'The pharmacist asks you to repeat the dose.', noteVi: 'Hôm nay dược sĩ nhờ bạn nhắc lại liều dùng.',
+        turn: {
+          say: 'Take two tablets three times a day. Can you repeat that for me?', vi: 'Uống hai viên, ba lần một ngày. Bạn nhắc lại giúp tôi được không?',
+          task: 'Nhắc lại liều dùng: hai viên, ba lần một ngày.',
+          replies: ['Two tablets, three times a day.', 'I take two tablets three times a day.', 'Two tablets, three times daily.'], accept: [['two', 'three'], ['three', 'times']],
+          focus: f('three times a day', '/θriː taɪmz ə deɪ/', 'THREE TIMES a DAY', '/θ/ in "three", /z/ at the end of "times", then link: "times-a".', '/θ/ trong "three", /z/ cuối "times", rồi nối âm: "times-a".'),
+        },
+      },
+      {
+        at: 2, note: 'The pharmacist asks about other medicine.', noteVi: 'Hôm nay dược sĩ hỏi về thuốc bạn đang dùng.',
+        turn: {
+          say: 'Are you taking any other medicine right now?', vi: 'Hiện bạn có đang uống thuốc nào khác không?',
+          task: 'Bạn chỉ uống vitamin mỗi ngày.',
+          replies: ['Only vitamins, every day.', 'Just vitamins. Nothing else.', 'No, only some vitamins.'], accept: [['vitamins'], ['vitamin'], ['no'], ['nothing']],
+          focus: f('vitamins', '/ˈvaɪtəmɪnz/', 'VI·ta·mins', 'Start with /v/ (top teeth on the bottom lip) and end with /z/.', 'Bắt đầu bằng /v/ (răng trên chạm môi dưới) và kết thúc bằng /z/.'),
+        },
+      },
+    ],
+  },
 ];
 
 export const scenarioById = (id) => SCENARIOS.find((s) => s.id === id);

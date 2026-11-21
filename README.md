@@ -14,13 +14,13 @@ Any static file server works too, for example `python3 -m http.server 8080`. The
 ## What is in it
 
 - **Practice today**: one button on Home that starts the first unfinished task of the day (three tasks, a few minutes each). A plain day streak, no points.
-- **Role-play**: three scripted conversations (restaurant, daily small talk, workplace update), four turns each. For every turn you answer, hear your recording, repeat one focus phrase with one tip, then answer again with the text hidden. Each new day you return, one turn changes (the waiter asks "Sorry, did you say two or three?").
+- **Role-play**: six scripted conversations (restaurant, daily small talk, workplace update, hotel check-in, asking for directions, pharmacy), four turns each. For every turn you answer, hear your recording, repeat one focus phrase with one tip, then answer again with the text hidden. Each new day you return, one turn changes (the waiter asks "Sorry, did you say two or three?").
 - **Sound drills and shadowing**: 25 lessons on the sounds Vietnamese speakers find hardest (/θ/, /ð/, final consonants, /s/ vs /ʃ/, -s and -ed endings, stress), with IPA and stress guides.
 - **Free talk**: speak for 30–60 seconds on a topic. No scores: you get "Here's what the app heard" and "Here's one thing to practice".
 - **My deck**: one tap saves a hard phrase with your recording and its Vietnamese meaning. The next day you see the Vietnamese situation first, try it, then reveal the English and both recordings.
 - **Weekly voice check**: save one line, say it again a week later, play both back and answer one concrete question ("Can you hear the final s in two parts?").
 - **Model voice**: the 🗣️ Voice button on every practice screen (and in Profile) lists the English voices installed in your browser, grouped by accent. Tap one to hear it; the choice is remembered and used for every Listen, Slow and conversation line.
-- **My voice**: "Upload my voice" in the picker and in Profile adds your own recordings (an mp3/wav/m4a file or a sample recorded in the browser) as a named voice. It replays each recording as it is: Listen plays your recording for a sentence you have recorded and the browser voice for the rest. It is not voice cloning and cannot read new sentences in your voice.
+- **My voice**: "Upload my voice" in the picker and in Profile adds your own recordings (an mp3/wav/m4a file or a sample recorded in the browser) as a named voice. It replays each recording as it is: Listen plays your recording for a sentence you have recorded and the browser voice for the rest. It is not voice cloning and cannot read new sentences in your voice. Sentences you have recorded also appear as "Shadow (voice name)" on the Practice tab. A voice pack in `audio/my-voice/` (an `index.json` listing a sample and one mp3 per sentence) is added to My voice and selected on the first visit.
 
 ## How feedback works
 

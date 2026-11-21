@@ -10,7 +10,7 @@ import { defaultState, addToDeck, dueCards, reviewCard, markDone, finishScenario
 import { bumpStreak, liveStreak, addDays } from '../js/days.js';
 import { todayTasks, shadowSet } from '../js/plan.js';
 import { chooseVoice } from '../js/speech.js';
-import { addRecording, clipFor, clipCount, removeMyVoice } from '../js/myvoice.js';
+import { addRecording, clipFor, clipCount, removeMyVoice, addPack, voiceLines } from '../js/myvoice.js';
 
 test('exact lines: words are labelled by what the browser heard', () => {
   const m = matchLine('Three iced teas, please.', ['tree iced teas please']);
@@ -112,7 +112,7 @@ test('seed content', () => {
   for (const l of LESSONS) assert.ok(l.items.length >= 4 && l.tip && l.titleVi, l.id);
   assert.ok(VOCAB.length >= 50);
   assert.equal(new Set(VOCAB.map((v) => v.w)).size, VOCAB.length);
-  assert.equal(SCENARIOS.length, 3);
+  assert.equal(SCENARIOS.length, 6);
 });
 
 test('free talk gives exactly one thing to practice, never scores', async () => {
@@ -159,4 +159,23 @@ test('my voice: a recording only answers for the sentence it says', () => {
   assert.deepEqual(removeMyVoice(state).sort(), ['a1', 'a3']);
   assert.equal(state.myVoice, null);
   assert.equal(state.settings.useMyVoice, false);
+});
+
+test('my voice: the bundled voice pack is added once and stays deleted', async () => {
+  const state = defaultState();
+  const pack = { id: 'p1', name: 'My voice', sample: 's.mp3', lines: [{ t: 'This is a flower.', vi: 'Đây là một bông hoa.', file: 'f.mp3' }] };
+  const store = async (file) => `key:${file}`;
+  assert.deepEqual(await addPack(state, pack, store), []);
+  assert.equal(state.settings.useMyVoice, true);
+  assert.equal(state.myVoice.sample, 'key:s.mp3');
+  assert.equal(clipFor(state, 'this is a flower'), 'key:f.mp3');
+  assert.deepEqual(voiceLines(state), [{ t: 'This is a flower.', vi: 'Đây là một bông hoa.', type: 'sentence', own: true }]);
+  removeMyVoice(state);
+  await addPack(state, pack, store);
+  assert.equal(state.myVoice, null, 'not added a second time');
+  // A voice the learner already made keeps its name and sample, and gains the pack's sentences.
+  const mine = defaultState();
+  addRecording(mine, { name: 'Hai', audio: 'a1' });
+  await addPack(mine, pack, store);
+  assert.deepEqual([mine.myVoice.name, mine.myVoice.sample, clipCount(mine)], ['Hai', 'a1', 1]);
 });

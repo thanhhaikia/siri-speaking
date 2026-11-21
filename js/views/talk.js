@@ -1,4 +1,4 @@
-// Role-play: three scripted conversations. Free answers are never marked word by word —
+// Role-play: scripted conversations. Free answers are never marked word by word —
 // any reply that carries an accepted idea completes the turn.
 import { orderedScenarios, buildDialogue, dialogueSteps, versionCount } from '../dialogue.js';
 import { scenarioById } from '../content/scenarios.js';

@@ -51,12 +51,13 @@ export function linePractice(host, app, { item, tip = null, shadow = false, kind
     ${tip ? `<div class="tip" style="margin-top:14px"><b>One tip</b>${esc(tip.en)}${vi(tip.vi)}</div>` : ''}
     ${shadow ? `<p class="center muted small" style="margin-top:12px">Listen, then repeat right away with the same rhythm.${vi('Nghe xong hãy nhại lại ngay, giữ đúng nhịp của giọng mẫu.')}</p>` : ''}
     <div data-speak></div><div class="result" data-result></div></div>`;
-  $('[data-say]', host).addEventListener('click', () => app.say(item.t));
+  const say = () => app.say(item.t, { own: item.own }); // item.own: a line from the learner's own recordings
+  $('[data-say]', host).addEventListener('click', say);
   $('[data-slow]', host).addEventListener('click', () => app.say(item.t, { slow: true }));
   const out = $('[data-result]', host);
   // With "My voice" on, say whether Listen plays the learner's own recording of this line or the browser voice.
   const voiceNote = () => {
-    const el = $('[data-voice-note]', host), my = app.state.settings.useMyVoice && app.state.myVoice;
+    const el = $('[data-voice-note]', host), my = (app.state.settings.useMyVoice || item.own) && app.state.myVoice;
     el.hidden = !my;
     if (my) el.innerHTML = clipFor(app.state, item.t) ? `Listen plays your recording (${esc(my.name)}).` : `No recording of this line in ${esc(my.name)} yet, so Listen uses ${esc(browserVoiceName(app))}.${vi('Chưa có bản ghi câu này bằng giọng của bạn nên nút Listen dùng giọng của trình duyệt.')}`;
   };
@@ -84,7 +85,7 @@ export function linePractice(host, app, { item, tip = null, shadow = false, kind
     : `<div class="note">${r.note ? `${esc(r.note.en)} ` : ''}Play your voice, then the model. Do they sound close?${vi('Hãy nghe giọng của bạn rồi nghe giọng mẫu. Hai giọng có gần giống nhau không?')}</div>`}
         <div class="row center" data-save></div></div>`;
       $('[data-me]', out)?.addEventListener('click', () => playAudio(r.blob));
-      $('[data-model]', out).addEventListener('click', () => app.say(item.t));
+      $('[data-model]', out).addEventListener('click', say);
       if (item.vi || tip) saveButton($('[data-save]', out), app, { en: item.t, vi: item.vi || tip?.vi || '', tip: tip?.vi || '' }, () => last?.blob);
       if (r.blob && app.state.myVoice) {
         const keep = document.createElement('button');
@@ -106,6 +107,6 @@ export function linePractice(host, app, { item, tip = null, shadow = false, kind
       if (r.blob && shadow) playAudio(r.blob);
     },
   });
-  if (shadow) app.say(item.t);
+  if (shadow) say();
   return { destroy: () => { document.removeEventListener('voicechange', voiceNote); box.destroy(); } };
 }

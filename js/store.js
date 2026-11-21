@@ -14,7 +14,8 @@ export const defaultState = () => ({
   scenarios: {}, // scenario id → { days: [day…] }  — distinct days played, drives the daily twist
   deck: [], // retry deck: { id, en, vi, tip, audio (IndexedDB key) | null, added, due, wins }
   voice: null, // weekly voice comparison: { line, first: { day, audio }, history: [{ line, from, to }] }
-  myVoice: null, // the learner's own recordings as a model voice: { name, sample (audio key) | null, clips: { sentence → audio key } }
+  myVoice: null, // the learner's own recordings as a model voice: { name, sample (audio key) | null, clips: { sentence → audio key }, lines: { sentence → { t, vi } } }
+  voicePack: null, // id of the bundled voice pack already added to myVoice (never added twice, so a deleted voice stays deleted)
   sounds: {}, // hint id → times the browser heard a word differently
   today: null, // { day, tasks: [{kind, id}] }
   history: [], // newest first: { t, day, kind, target, pct | null }
