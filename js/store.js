@@ -19,7 +19,8 @@ export const defaultState = () => ({
   history: [], // newest first: { t, day, kind, target, pct | null }
 });
 
-let storage = typeof localStorage !== 'undefined' ? localStorage : null;
+let storage = null;
+try { storage = typeof localStorage !== 'undefined' ? localStorage : null; } catch { /* storage blocked: progress lasts for this visit only */ }
 export const setStorage = (s) => { storage = s; };
 
 export function load() {
