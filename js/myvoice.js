@@ -28,20 +28,19 @@ export function addRecording(state, { name, audio = null, text = '', vi = '' }) 
 
 /**
  * Add the voice pack shipped with the app (audio/my-voice/index.json) to "My voice", once per pack id.
- * `store(file)` saves one of its files and resolves to the audio key. Returns the audio keys no longer used.
+ * `store(file)` saves one of its files and resolves to the audio key, or null. The learner's own recordings are
+ * kept: the pack only fills in what is missing. Returns the audio keys that ended up unused.
  */
 export async function addPack(state, pack, store) {
   if (!pack?.id || state.voicePack === pack.id) return [];
-  const old = [];
-  const sample = !state.myVoice?.sample && pack.sample ? await store(pack.sample) : null;
-  if (sample || !state.myVoice) old.push(...addRecording(state, { name: state.myVoice?.name || pack.name, audio: sample }));
-  for (const line of pack.lines || []) {
-    const audio = await store(line.file);
-    if (audio) old.push(...addRecording(state, { audio, text: line.t, vi: line.vi }));
-  }
+  const lines = pack.lines || [], files = [pack.sample, ...lines.map((l) => l.file)].filter(Boolean), keys = {}, used = [];
+  for (const file of files) keys[file] = await store(file);
+  const add = (file, rec) => { used.push(keys[file]); addRecording(state, { ...rec, audio: keys[file] }); };
+  if (!state.myVoice?.sample) add(pack.sample, { name: state.myVoice?.name || pack.name });
+  for (const line of lines) if (!clipFor(state, line.t)) add(line.file, { text: line.t, vi: line.vi });
   state.voicePack = pack.id;
   state.settings.useMyVoice = true;
-  return old;
+  return Object.values(keys).filter((k) => k && !used.includes(k));
 }
 
 /** Forget the voice. Returns its audio keys so the caller can delete the recordings. */

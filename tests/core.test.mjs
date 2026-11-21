@@ -165,7 +165,7 @@ test('my voice: the bundled voice pack is added once and stays deleted', async (
   const state = defaultState();
   const pack = { id: 'p1', name: 'My voice', sample: 's.mp3', lines: [{ t: 'This is a flower.', vi: 'Đây là một bông hoa.', file: 'f.mp3' }] };
   const store = async (file) => `key:${file}`;
-  assert.deepEqual(await addPack(state, pack, store), []);
+  assert.deepEqual(await addPack(state, pack, store), [], 'every file is used and nothing is displaced');
   assert.equal(state.settings.useMyVoice, true);
   assert.equal(state.myVoice.sample, 'key:s.mp3');
   assert.equal(clipFor(state, 'this is a flower'), 'key:f.mp3');
@@ -173,9 +173,11 @@ test('my voice: the bundled voice pack is added once and stays deleted', async (
   removeMyVoice(state);
   await addPack(state, pack, store);
   assert.equal(state.myVoice, null, 'not added a second time');
-  // A voice the learner already made keeps its name and sample, and gains the pack's sentences.
+  // A voice the learner already made keeps its name, its sample and its own recordings; the pack fills in the rest.
   const mine = defaultState();
   addRecording(mine, { name: 'Hai', audio: 'a1' });
-  await addPack(mine, pack, store);
-  assert.deepEqual([mine.myVoice.name, mine.myVoice.sample, clipCount(mine)], ['Hai', 'a1', 1]);
+  addRecording(mine, { audio: 'a2', text: 'This is a flower.' });
+  const two = { ...pack, lines: [...pack.lines, { t: 'It is close.', vi: 'Nó ở gần.', file: 'c.mp3' }] };
+  assert.deepEqual(await addPack(mine, two, store), ['key:s.mp3', 'key:f.mp3'], 'unused pack files are handed back');
+  assert.deepEqual([mine.myVoice.name, mine.myVoice.sample, clipFor(mine, 'This is a flower.'), clipFor(mine, 'It is close.')], ['Hai', 'a1', 'a2', 'key:c.mp3']);
 });
