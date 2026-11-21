@@ -38,7 +38,7 @@ export default function voice(root, app, [mode]) {
       if (r.quiet || !r.blob) { out.innerHTML = r.blob ? QUIET : `<div class="note warn">This check needs a recording, so it needs a microphone.${vi('Phần này cần ghi âm nên cần có micro.')}</div>`; return; }
       take = r;
       if (stage === 'record') {
-        out.innerHTML = '<div class="row center"><button class="btn sm ghost" data-now>▶ My voice</button></div>';
+        out.innerHTML = '<div class="row center"><button class="btn sm ghost" data-now>▶ My recording</button></div>';
         foot.innerHTML = '<button class="btn" data-keep>Save this recording</button>';
         $('[data-keep]', root).addEventListener('click', async () => {
           const audio = await saveAudio(take.blob);

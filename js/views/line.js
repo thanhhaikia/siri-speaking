@@ -2,7 +2,9 @@
 import { speakBox } from './speakbox.js';
 import { matchLine, practiceTip, LABELS } from '../match.js';
 import { playAudio } from '../recorder.js';
-import { saveAudio } from '../audiodb.js';
+import { saveAudio, deleteAudio } from '../audiodb.js';
+import { addRecording, clipFor } from '../myvoice.js';
+import { browserVoiceName } from './voicepicker.js';
 import { addToDeck, inDeck, logAttempt, noteSound } from '../store.js';
 import { ipaFor } from '../content/ipa.js';
 import { $, esc, vi, toast } from '../ui.js';
@@ -45,12 +47,21 @@ export function linePractice(host, app, { item, tip = null, shadow = false, kind
     <div class="hints">${item.ipa ? `<span>${esc(item.ipa)}</span>` : ''}${item.s ? `<span>${esc(item.s)}</span>` : ''}</div>
     ${vi(item.vi)}
     <div class="row center"><button class="btn sm ghost" data-say>🔊 Listen</button><button class="btn sm ghost" data-slow>🐢 Slow</button></div>
+    <p class="center muted small" data-voice-note hidden></p>
     ${tip ? `<div class="tip" style="margin-top:14px"><b>One tip</b>${esc(tip.en)}${vi(tip.vi)}</div>` : ''}
     ${shadow ? `<p class="center muted small" style="margin-top:12px">Listen, then repeat right away with the same rhythm.${vi('Nghe xong hãy nhại lại ngay, giữ đúng nhịp của giọng mẫu.')}</p>` : ''}
     <div data-speak></div><div class="result" data-result></div></div>`;
   $('[data-say]', host).addEventListener('click', () => app.say(item.t));
   $('[data-slow]', host).addEventListener('click', () => app.say(item.t, { slow: true }));
   const out = $('[data-result]', host);
+  // With "My voice" on, say whether Listen plays the learner's own recording of this line or the browser voice.
+  const voiceNote = () => {
+    const el = $('[data-voice-note]', host), my = app.state.settings.useMyVoice && app.state.myVoice;
+    el.hidden = !my;
+    if (my) el.innerHTML = clipFor(app.state, item.t) ? `Listen plays your recording (${esc(my.name)}).` : `No recording of this line in ${esc(my.name)} yet, so Listen uses ${esc(browserVoiceName(app))}.${vi('Chưa có bản ghi câu này bằng giọng của bạn nên nút Listen dùng giọng của trình duyệt.')}`;
+  };
+  voiceNote();
+  document.addEventListener('voicechange', voiceNote);
 
   const box = speakBox($('[data-speak]', host), app, {
     maxSec: isWord ? 6 : 14,
@@ -64,7 +75,7 @@ export function linePractice(host, app, { item, tip = null, shadow = false, kind
       if (pt) noteSound(app.state, pt.id);
       app.save();
       out.innerHTML = `<div class="stack">
-        <div class="row center">${r.blob ? '<button class="btn sm ghost" data-me>▶ My voice</button>' : ''}<button class="btn sm ghost" data-model>🔊 Model</button></div>
+        <div class="row center">${r.blob ? '<button class="btn sm ghost" data-me>▶ My recording</button>' : ''}<button class="btn sm ghost" data-model>🔊 Model</button></div>
         ${match ? `${wordsHtml(match)}
           <p class="center"><span class="pct">${match.heard} / ${match.total}</span><br><span class="muted small">words heard (${match.pct}%)${vi('số từ trình duyệt nghe được')}</span></p>
           <div class="heard-box small">Here's what the app heard: <q>${esc(match.transcript)}</q></div>
@@ -75,10 +86,26 @@ export function linePractice(host, app, { item, tip = null, shadow = false, kind
       $('[data-me]', out)?.addEventListener('click', () => playAudio(r.blob));
       $('[data-model]', out).addEventListener('click', () => app.say(item.t));
       if (item.vi || tip) saveButton($('[data-save]', out), app, { en: item.t, vi: item.vi || tip?.vi || '', tip: tip?.vi || '' }, () => last?.blob);
+      if (r.blob && app.state.myVoice) {
+        const keep = document.createElement('button');
+        keep.type = 'button';
+        keep.className = 'btn sm ghost';
+        keep.textContent = `🎙 Use this take as ${app.state.myVoice.name}`;
+        keep.addEventListener('click', async () => {
+          const audio = await saveAudio(r.blob);
+          if (!audio) return toast('This browser could not save the recording.');
+          addRecording(app.state, { audio, text: item.t }).forEach(deleteAudio);
+          app.save();
+          keep.textContent = `✓ Saved in ${app.state.myVoice.name}`;
+          keep.disabled = true;
+          voiceNote();
+        });
+        $('[data-save]', out).appendChild(keep);
+      }
       onAttempt?.({ pct: match ? match.pct : null, ok: true });
       if (r.blob && shadow) playAudio(r.blob);
     },
   });
   if (shadow) app.say(item.t);
-  return { destroy: () => box.destroy() };
+  return { destroy: () => { document.removeEventListener('voicechange', voiceNote); box.destroy(); } };
 }

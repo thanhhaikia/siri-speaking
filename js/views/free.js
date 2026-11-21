@@ -49,7 +49,7 @@ export default function free(root, app) {
       <h2 style="margin-top:6px">Here's what the app heard${vi('Những gì máy nghe được')}</h2>
       ${transcript ? `<div class="heard-box">${esc(transcript)}</div><p class="legend">This is the browser's guess at your words. It can be wrong even when you spoke clearly.${vi('Đây là phần trình duyệt đoán ra từ giọng của bạn. Nó có thể sai ngay cả khi bạn nói rõ.')}</p>`
     : `<div class="note">${r.note ? `${esc(r.note.en)} ` : ''}No transcript this time. Listen to your recording instead.${vi('Lần này không có phần chữ. Hãy nghe lại bản ghi âm của bạn.')}</div>`}
-      ${r.blob ? '<div class="row center" style="margin-top:10px"><button class="btn sm ghost" data-me>▶ My voice</button></div>' : ''}
+      ${r.blob ? '<div class="row center" style="margin-top:10px"><button class="btn sm ghost" data-me>▶ My recording</button></div>' : ''}
       <h2>Here's one thing to practice${vi('Một điều nên luyện thêm')}</h2>
       <div class="tip">${esc(thing.en)}${vi(thing.vi)}${hint ? `<br><span class="small">${esc(hint.en)}</span>${vi(hint.vi)}` : ''}</div>
       ${thing.drill ? '<div data-line style="margin-top:16px"></div>' : ''}

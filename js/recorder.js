@@ -98,3 +98,14 @@ export function playAudio(blob) {
     player.play().catch(() => resolve(false));
   });
 }
+
+/** Can this browser play the file? Resolves false for formats it cannot decode. */
+export function canPlay(blob) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(blob), a = new Audio();
+    const done = (ok) => { URL.revokeObjectURL(url); resolve(ok); };
+    a.onloadedmetadata = () => done(true);
+    a.onerror = () => done(false);
+    a.src = url;
+  });
+}

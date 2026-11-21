@@ -179,6 +179,9 @@ input[type=text]:focus, select:focus { outline: 3px solid var(--blue-l); border-
 .seg button.on { background: var(--blue); color: #fff; }
 
 .voice-btn { appearance: none; border: 1.5px solid var(--line); background: #fff; color: var(--muted); font: inherit; font-size: .85rem; font-weight: 700; padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+.field { display: block; font-weight: 600; margin: 14px 0; }
+.field input { margin-top: 6px; font-weight: 400; }
+.field input[type=file] { display: block; width: 100%; font: inherit; font-size: .9rem; }
 .voices h3 { margin: 16px 0 8px; color: var(--muted); }
 .voices .choice { padding: 12px 14px; }
 .voices .choice .ic { font-size: 1.1rem; }

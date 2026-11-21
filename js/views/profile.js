@@ -33,7 +33,7 @@ export default function profile(root, app) {
     <div class="list">${sounds.map(([id, n]) => `<div class="tip"><b>${esc(HINTS[id].sound)} · ${n}×</b>${esc(HINTS[id].en)}${vi(HINTS[id].vi)}</div>`).join('') || '<p class="muted small">Nothing yet. This fills in as you practice.</p>'}</div>
     <h2>Settings${vi('Cài đặt')}</h2>
     <div class="card">
-      <div class="setting"><span>Model voice${vi('Giọng mẫu: chạm để nghe thử và đổi giọng')}</span><button class="btn sm ghost" data-voice>🗣️ <span data-voice-name></span></button></div>
+      <div class="setting"><span>Model voice${vi('Giọng mẫu: chạm để nghe thử và đổi giọng')}</span><span class="row" style="justify-content:flex-end"><button class="btn sm ghost" data-voice>🗣️ <span data-voice-name></span></button><button class="btn sm ghost" data-voice="upload">⬆ Upload my voice</button></span></div>
       <div class="setting"><span>Speed${vi('Tốc độ đọc')}</span>${seg('rate', [[0.75, 'Slow'], [0.9, 'Normal'], [1, 'Fast']])}</div>
       <div class="setting"><span>Show what the app heard${vi('Nhận diện chữ (không bắt buộc). Auto: bật trên máy tính, tắt trên điện thoại')}</span>${seg('transcribe', [['auto', 'Auto'], ['on', 'On'], ['off', 'Off']])}</div>
       <div class="setting"><span>Vietnamese help${vi('Hiện phần giải thích tiếng Việt')}</span>${seg('showVi', [[true, 'On'], [false, 'Off']])}</div>

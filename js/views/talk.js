@@ -71,7 +71,7 @@ function play(root, app, scenario) {
           : check.done ? `<div class="note ok">✓ That answers the question.${vi('Câu trả lời của bạn phù hợp với câu hỏi.')}</div>`
             : `<div class="note">The app heard something different from the samples. If you answered the question, go on — otherwise try again.${vi('Máy nghe ra câu khác với các câu mẫu. Nếu bạn đã trả lời đúng ý thì cứ tiếp tục, nếu chưa hãy thử lại.')}</div>`;
         out.innerHTML = `<div class="bubble me"><span class="who" style="color:#dbe7ff">You</span>${check ? `<span class="small">Here's what the app heard:</span><br>“${esc(check.transcript)}”` : 'Your recording'}
-          ${r.blob ? '<div style="margin-top:8px"><button class="btn sm ghost" data-me>▶ My voice</button></div>' : ''}</div>${status}<div class="row center" style="margin-top:12px" data-save></div>`;
+          ${r.blob ? '<div style="margin-top:8px"><button class="btn sm ghost" data-me>▶ My recording</button></div>' : ''}</div>${status}<div class="row center" style="margin-top:12px" data-save></div>`;
         $('[data-me]', out)?.addEventListener('click', () => playAudio(r.blob));
         saveButton($('[data-save]', out), app, { en: turn.replies[0], vi: turn.task, tip: turn.focus.tip.vi }, () => last?.blob);
         samples.hidden = false;

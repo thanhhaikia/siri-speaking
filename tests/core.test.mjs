@@ -10,6 +10,7 @@ import { defaultState, addToDeck, dueCards, reviewCard, markDone, finishScenario
 import { bumpStreak, liveStreak, addDays } from '../js/days.js';
 import { todayTasks, shadowSet } from '../js/plan.js';
 import { chooseVoice } from '../js/speech.js';
+import { addRecording, clipFor, clipCount, removeMyVoice } from '../js/myvoice.js';
 
 test('exact lines: words are labelled by what the browser heard', () => {
   const m = matchLine('Three iced teas, please.', ['tree iced teas please']);
@@ -140,4 +141,22 @@ test('model voice: the chosen voice wins, and a missing one falls back to the ac
   assert.equal(chooseVoice(list, 'en-GB', 'female', 'Not on this device').name, 'Hazel');
   assert.equal(chooseVoice(list, 'en-US', 'male', null).name, 'David');
   assert.equal(chooseVoice([], 'en-US', 'female', 'David'), null);
+});
+
+test('my voice: a recording only answers for the sentence it says', () => {
+  const state = defaultState();
+  assert.deepEqual(addRecording(state, { name: 'Hai', audio: 'a1' }), []);
+  assert.equal(state.myVoice.sample, 'a1');
+  assert.equal(clipFor(state, 'Three, please.'), null);
+  addRecording(state, { audio: 'a2', text: 'Three, please.' });
+  assert.equal(clipFor(state, 'three please'), 'a2');
+  assert.equal(clipFor(state, 'A table for three'), null);
+  assert.deepEqual(addRecording(state, { audio: 'a3', text: 'Three please' }), ['a2']); // replaced take is reported for deletion
+  assert.deepEqual(addRecording(state, { name: 'My voice' }), []); // rename only
+  assert.equal(state.myVoice.name, 'My voice');
+  assert.equal(clipCount(state), 1);
+  state.settings.useMyVoice = true;
+  assert.deepEqual(removeMyVoice(state).sort(), ['a1', 'a3']);
+  assert.equal(state.myVoice, null);
+  assert.equal(state.settings.useMyVoice, false);
 });

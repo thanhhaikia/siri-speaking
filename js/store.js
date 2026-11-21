@@ -7,13 +7,14 @@ const MAX_HISTORY = 200;
 export const defaultState = () => ({
   v: 1,
   profile: null, // { name, focus: 'daily'|'work'|'both', accent: 'en-US'|'en-GB' }
-  settings: { rate: 0.9, gender: 'female', voiceName: null, transcribe: 'auto', showVi: true },
+  settings: { rate: 0.9, gender: 'female', voiceName: null, useMyVoice: false, transcribe: 'auto', showVi: true },
   streak: { count: 0, last: null, best: 0 },
   done: {}, // day → { kind: count }  (kind: talk | drill | shadow | deck | voice | free)
   lessons: {}, // lesson id → { plays, best (% of words heard) | null, done }
   scenarios: {}, // scenario id → { days: [day…] }  — distinct days played, drives the daily twist
   deck: [], // retry deck: { id, en, vi, tip, audio (IndexedDB key) | null, added, due, wins }
   voice: null, // weekly voice comparison: { line, first: { day, audio }, history: [{ line, from, to }] }
+  myVoice: null, // the learner's own recordings as a model voice: { name, sample (audio key) | null, clips: { sentence → audio key } }
   sounds: {}, // hint id → times the browser heard a word differently
   today: null, // { day, tasks: [{kind, id}] }
   history: [], // newest first: { t, day, kind, target, pct | null }

@@ -20,6 +20,7 @@ Any static file server works too, for example `python3 -m http.server 8080`. The
 - **My deck**: one tap saves a hard phrase with your recording and its Vietnamese meaning. The next day you see the Vietnamese situation first, try it, then reveal the English and both recordings.
 - **Weekly voice check**: save one line, say it again a week later, play both back and answer one concrete question ("Can you hear the final s in two parts?").
 - **Model voice**: the 🗣️ Voice button on every practice screen (and in Profile) lists the English voices installed in your browser, grouped by accent. Tap one to hear it; the choice is remembered and used for every Listen, Slow and conversation line.
+- **My voice**: "Upload my voice" in the picker and in Profile adds your own recordings (an mp3/wav/m4a file or a sample recorded in the browser) as a named voice. It replays each recording as it is: Listen plays your recording for a sentence you have recorded and the browser voice for the rest. It is not voice cloning and cannot read new sentences in your voice.
 
 ## How feedback works
 
@@ -39,6 +40,7 @@ js/store.js          state in localStorage (streak, plan, deck, voice check, his
 js/recorder.js       MediaRecorder capture, loudness, quiet detection
 js/audiodb.js        saved recordings in IndexedDB
 js/speech.js         model voice and optional speech recognition
+js/myvoice.js        the learner's own recordings used as a model voice
 js/match.js          "what the browser heard" and accepted replies
 js/scoring.js, js/phonics.js   text alignment and likely-cause hints
 js/dialogue.js, js/plan.js     daily conversation version and today's tasks

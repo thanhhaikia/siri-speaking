@@ -1,9 +1,11 @@
 // Hash router and the app context shared by all views.
 import { load, save } from './store.js';
 import { speak, stopSpeaking, srSupported, onVoicesChanged } from './speech.js';
-import { isMobile, stopAudio } from './recorder.js';
-import { openVoicePicker, showVoiceName } from './views/voicepicker.js';
-import { $, $$ } from './ui.js';
+import { isMobile, stopAudio, playAudio } from './recorder.js';
+import { loadAudio } from './audiodb.js';
+import { clipFor } from './myvoice.js';
+import { openVoicePicker, showVoiceName, browserVoiceName } from './views/voicepicker.js';
+import { $, $$, toast } from './ui.js';
 
 const routes = {
   '': ['home', 'home'], welcome: ['onboarding', null], practice: ['practice', 'practice'],
@@ -11,15 +13,27 @@ const routes = {
   free: ['free', null], deck: ['deck', 'deck'], voice: ['voice', null], me: ['profile', 'me'],
 };
 
+let sayTurn = 0, noted = false; // noted: the "no recording yet" message is shown once per screen
+
 export const app = {
   state: load(),
   save() { save(app.state); },
   go(hash) { if (location.hash === hash) render(); else location.hash = hash; },
   lang: () => app.state.profile?.accent || 'en-US',
-  /** Play the model voice. */
-  say(text, { slow = false } = {}) {
-    const s = app.state.settings;
+  /** Play the model voice: the learner's own recording of this sentence when "My voice" is on and has one, else the browser voice. */
+  async say(text, { slow = false } = {}) {
+    const s = app.state.settings, turn = ++sayTurn;
     stopAudio();
+    stopSpeaking();
+    if (s.useMyVoice && app.state.myVoice && !slow) {
+      const blob = await loadAudio(clipFor(app.state, text));
+      if (turn !== sayTurn) return false;
+      if (blob) { if (await playAudio(blob)) return true; } else if (!noted && !$('[data-voice-note]')) {
+        noted = true;
+        toast(`No recording of this sentence in ${app.state.myVoice.name} yet, so you hear ${browserVoiceName(app)}.`, 4000);
+      }
+      if (turn !== sayTurn) return false;
+    }
     return speak(text, { accent: app.lang(), gender: s.gender, rate: slow ? 0.6 : s.rate, voiceName: s.voiceName });
   },
   /** Should attempts also be transcribed? Optional: recording and replay work without it. */
@@ -36,6 +50,8 @@ async function render() {
   const [file, tab] = routes[name] || routes[''];
   cleanup?.();
   cleanup = null;
+  sayTurn++;
+  noted = false;
   stopSpeaking();
   stopAudio();
   $('.modal-x')?.click();
@@ -52,7 +68,7 @@ async function render() {
   window.scrollTo(0, 0);
 }
 
-document.addEventListener('click', (e) => { if (e.target.closest('[data-voice]')) openVoicePicker(app); });
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-voice]'); if (b) openVoicePicker(app, b.dataset.voice === 'upload'); });
 onVoicesChanged(() => showVoiceName(app));
 window.addEventListener('hashchange', render);
 render();
