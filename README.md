@@ -19,6 +19,7 @@ Any static file server works too, for example `python3 -m http.server 8080`. The
 - **Free talk**: speak for 30–60 seconds on a topic. No scores: you get "Here's what the app heard" and "Here's one thing to practice".
 - **My deck**: one tap saves a hard phrase with your recording and its Vietnamese meaning. The next day you see the Vietnamese situation first, try it, then reveal the English and both recordings.
 - **Weekly voice check**: save one line, say it again a week later, play both back and answer one concrete question ("Can you hear the final s in two parts?").
+- **Model voice**: the 🗣️ Voice button on every practice screen (and in Profile) lists the English voices installed in your browser, grouped by accent. Tap one to hear it; the choice is remembered and used for every Listen, Slow and conversation line.
 
 ## How feedback works
 

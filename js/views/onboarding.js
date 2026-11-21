@@ -1,4 +1,6 @@
 // Three short questions, one per screen: name, focus, model voice.
+import { speak } from '../speech.js';
+import { SAMPLE } from './voicepicker.js';
 import { $, $$, esc, vi } from '../ui.js';
 
 const FOCUS = [
@@ -17,13 +19,13 @@ export default function onboarding(root, app) {
       <h2>What should we call you?${vi('Bạn tên là gì?')}</h2>
       <input type="text" id="name" maxlength="24" placeholder="Your name" value="${esc(draft.name)}" autocomplete="given-name">`,
     () => `<h1>Where do you need English most?${vi('Bạn cần tiếng Anh nhất ở đâu?')}</h1><p class="muted small">This decides which conversation comes first.</p>${choices(FOCUS, 'focus')}`,
-    () => `<h1>Which model voice?${vi('Bạn muốn nghe giọng mẫu nào?')}</h1><p class="muted small">You can change it later in Profile.</p>${choices(ACCENTS, 'accent')}
+    () => `<h1>Which model voice?${vi('Bạn muốn nghe giọng mẫu nào?')}</h1><p class="muted small">Tap one to hear it. You can pick the exact voice any time with the 🗣️ Voice button.${vi('Chạm để nghe thử. Bạn có thể chọn giọng cụ thể bất cứ lúc nào bằng nút 🗣️ Voice.')}</p>${choices(ACCENTS, 'accent')}
       <div class="note" style="margin-top:16px">Your voice recordings and progress stay on this device. No account needed.${vi('Bản ghi âm và tiến độ chỉ lưu trên thiết bị này. Không cần tài khoản.')}</div>`,
   ];
   function paint() {
     root.innerHTML = `<div class="bar-top"><div class="progress"><i style="width:${((step + 1) / screens.length) * 100}%"></i></div></div>
       <form>${screens[step]()}<div class="footer">${step ? '<button type="button" class="btn ghost" data-back>Back</button>' : ''}<button class="btn">${step === screens.length - 1 ? 'Start' : 'Continue'}</button></div></form>`;
-    $$('.choice', root).forEach((b) => b.addEventListener('click', () => { draft[b.dataset.key] = b.dataset.id; paint(); }));
+    $$('.choice', root).forEach((b) => b.addEventListener('click', () => { draft[b.dataset.key] = b.dataset.id; paint(); if (b.dataset.key === 'accent') speak(SAMPLE, { accent: draft.accent }); }));
     $('[data-back]', root)?.addEventListener('click', () => { step--; paint(); });
     $('form', root).addEventListener('submit', (e) => {
       e.preventDefault();

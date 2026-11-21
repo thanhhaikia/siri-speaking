@@ -25,8 +25,7 @@ export function voices() {
   return cache;
 }
 export function onVoicesChanged(cb) {
-  if (!synth) return;
-  synth.addEventListener?.('voiceschanged', () => { voices(); cb(); });
+  synth?.addEventListener?.('voiceschanged', () => { voices(); cb(); });
 }
 
 const norm = (lang) => (lang || '').replace('_', '-').toLowerCase();
@@ -38,18 +37,16 @@ export function englishVoices() {
     .map((v) => ({ voice: v, name: v.name, lang: v.lang, accent: norm(v.lang) === 'en-us' ? 'en-US' : norm(v.lang) === 'en-gb' ? 'en-GB' : 'en-other', gender: guessGender(v.name), local: v.localService }));
 }
 
-/** Best voice for an accent + preferred gender. Falls back to any voice of that accent, then any English voice. */
-export function pickVoice(accent = 'en-US', gender = 'female', voiceName = null) {
-  const list = englishVoices();
-  if (voiceName) {
-    const exact = list.find((v) => v.name === voiceName);
-    if (exact) return exact.voice;
-  }
+/** The learner's chosen voice if this device has it, else the best one for the accent, else any English voice. */
+export function chooseVoice(list, accent = 'en-US', gender = 'female', voiceName = null) {
+  const exact = voiceName && list.find((v) => v.name === voiceName);
+  if (exact) return exact;
   const sameAccent = list.filter((v) => v.accent === accent);
   const rank = (v) => (v.gender === gender ? 0 : v.gender == null ? 1 : 2) + (/google|natural|neural|online|premium|enhanced/i.test(v.name) ? -0.5 : 0);
   const pool = sameAccent.length ? sameAccent : list;
-  return [...pool].sort((a, b) => rank(a) - rank(b))[0]?.voice || null;
+  return [...pool].sort((a, b) => rank(a) - rank(b))[0] || null;
 }
+export const pickVoice = (accent, gender, voiceName) => chooseVoice(englishVoices(), accent, gender, voiceName)?.voice || null;
 
 /** Speak text with the model voice. Resolves when finished (or immediately if unsupported). */
 export function speak(text, { accent = 'en-US', gender = 'female', rate = 0.9, voiceName = null, onBoundary } = {}) {

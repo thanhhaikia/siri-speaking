@@ -1,7 +1,8 @@
 // Hash router and the app context shared by all views.
 import { load, save } from './store.js';
-import { speak, stopSpeaking, srSupported } from './speech.js';
+import { speak, stopSpeaking, srSupported, onVoicesChanged } from './speech.js';
 import { isMobile, stopAudio } from './recorder.js';
+import { openVoicePicker, showVoiceName } from './views/voicepicker.js';
 import { $, $$ } from './ui.js';
 
 const routes = {
@@ -37,6 +38,7 @@ async function render() {
   cleanup = null;
   stopSpeaking();
   stopAudio();
+  $('.modal-x')?.click();
   const view = $('#view');
   const mod = await import(`./views/${file}.js`);
   const focus = tab == null || params.length > 0; // full-screen activity: no bottom nav
@@ -46,8 +48,11 @@ async function render() {
   document.body.classList.toggle('no-vi', !app.state.settings.showVi);
   view.innerHTML = '';
   cleanup = mod.default(view, app, params, name) || null;
+  showVoiceName(app);
   window.scrollTo(0, 0);
 }
 
+document.addEventListener('click', (e) => { if (e.target.closest('[data-voice]')) openVoicePicker(app); });
+onVoicesChanged(() => showVoiceName(app));
 window.addEventListener('hashchange', render);
 render();

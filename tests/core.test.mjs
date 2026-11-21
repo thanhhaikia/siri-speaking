@@ -9,6 +9,7 @@ import { VOCAB } from '../js/content/vocab.js';
 import { defaultState, addToDeck, dueCards, reviewCard, markDone, finishScenario, scenarioVisit, voiceStatus, finishLesson } from '../js/store.js';
 import { bumpStreak, liveStreak, addDays } from '../js/days.js';
 import { todayTasks, shadowSet } from '../js/plan.js';
+import { chooseVoice } from '../js/speech.js';
 
 test('exact lines: words are labelled by what the browser heard', () => {
   const m = matchLine('Three iced teas, please.', ['tree iced teas please']);
@@ -127,4 +128,16 @@ test('free talk gives exactly one thing to practice, never scores', async () => 
   assert.equal(word.kind, 'word');
   assert.equal(word.drill, 'talked');
   for (const r of [word, oneThing({ transcript: long })]) assert.deepEqual(Object.keys(r).filter((k) => /score|pct/.test(k)), []);
+});
+
+test('model voice: the chosen voice wins, and a missing one falls back to the accent', () => {
+  const list = [
+    { name: 'Zira', accent: 'en-US', gender: 'female' },
+    { name: 'David', accent: 'en-US', gender: 'male' },
+    { name: 'Hazel', accent: 'en-GB', gender: 'female' },
+  ];
+  assert.equal(chooseVoice(list, 'en-US', 'female', 'David').name, 'David');
+  assert.equal(chooseVoice(list, 'en-GB', 'female', 'Not on this device').name, 'Hazel');
+  assert.equal(chooseVoice(list, 'en-US', 'male', null).name, 'David');
+  assert.equal(chooseVoice([], 'en-US', 'female', 'David'), null);
 });

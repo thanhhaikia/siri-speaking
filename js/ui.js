@@ -21,11 +21,11 @@ export function toast(msg, ms = 2600) {
   setTimeout(() => el.remove(), ms + 400);
 }
 
-export function modal(inner) {
+export function modal(inner, onClose) {
   const wrap = document.createElement('div');
   wrap.className = 'modal-wrap';
   wrap.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><button class="modal-x" aria-label="Close">✕</button>${inner}</div>`;
-  const close = () => wrap.remove();
+  const close = () => { wrap.remove(); onClose?.(); };
   wrap.addEventListener('click', (e) => { if (e.target === wrap || e.target.closest('.modal-x') || e.target.closest('[data-close]')) close(); });
   document.body.appendChild(wrap);
   return { el: wrap.firstElementChild, close };
@@ -38,5 +38,5 @@ export function ring(pct, size = 170, big = '', label = '') {
     <div class="ring-val"><b>${esc(big)}</b><small>${esc(label)}</small></div></div>`;
 }
 
-export const topBar = (pct, backHref = '#/') => `<div class="bar-top"><a class="x" href="${backHref}" aria-label="Close">✕</a><div class="progress"><i style="width:${Math.round(pct)}%"></i></div></div>`;
+export const topBar = (pct, backHref = '#/') => `<div class="bar-top"><a class="x" href="${backHref}" aria-label="Close">✕</a><div class="progress"><i style="width:${Math.round(pct)}%"></i></div><button class="voice-btn" data-voice aria-label="Change the model voice">🗣️ Voice</button></div>`;
 export const fmtDate = (ts) => new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });

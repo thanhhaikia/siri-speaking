@@ -21,7 +21,7 @@ export default function profile(root, app) {
   const points = Object.keys(byDay).sort().slice(-14).map((day) => ({ day, pct: Math.round(byDay[day].reduce((x, y) => x + y, 0) / byDay[day].length) }));
   const sounds = Object.entries(state.sounds).sort((a, b) => b[1] - a[1]).slice(0, 3);
   const vs = voiceStatus(state);
-  const seg = (key, opts) => `<span class="seg">${opts.map(([val, label]) => `<button data-set="${key}" data-val="${val}" class="${String(key === 'accent' ? state.profile.accent : s[key]) === String(val) ? 'on' : ''}">${label}</button>`).join('')}</span>`;
+  const seg = (key, opts) => `<span class="seg">${opts.map(([val, label]) => `<button data-set="${key}" data-val="${val}" class="${String(s[key]) === String(val) ? 'on' : ''}">${label}</button>`).join('')}</span>`;
   root.innerHTML = `<h1>${esc(state.profile.name)}</h1>
     <p class="muted">🔥 ${liveStreak(state.streak)}-day streak · best ${state.streak.best} · ${Object.keys(state.done).length} practice days</p>
     <a class="card task" href="#/voice"><span class="ic">🎙️</span><span class="body"><b>Weekly voice check</b>${vi(vs.stage === 'record' ? 'Ghi âm một câu để so sánh sau 7 ngày' : vs.stage === 'wait' ? `Còn ${vs.daysLeft} ngày nữa đến lần so sánh` : 'Đã đến lúc so sánh giọng của bạn')}</span><span class="badge">${vs.stage === 'wait' ? `${vs.daysLeft} d` : vs.stage === 'compare' ? 'Ready' : 'Start'}</span></a>
@@ -33,21 +33,19 @@ export default function profile(root, app) {
     <div class="list">${sounds.map(([id, n]) => `<div class="tip"><b>${esc(HINTS[id].sound)} · ${n}×</b>${esc(HINTS[id].en)}${vi(HINTS[id].vi)}</div>`).join('') || '<p class="muted small">Nothing yet. This fills in as you practice.</p>'}</div>
     <h2>Settings${vi('Cài đặt')}</h2>
     <div class="card">
-      <div class="setting"><span>Model accent${vi('Giọng mẫu')}</span>${seg('accent', [['en-US', 'US'], ['en-GB', 'UK']])}</div>
-      <div class="setting"><span>Voice${vi('Giọng nam / nữ')}</span>${seg('gender', [['female', 'Female'], ['male', 'Male']])}</div>
+      <div class="setting"><span>Model voice${vi('Giọng mẫu: chạm để nghe thử và đổi giọng')}</span><button class="btn sm ghost" data-voice>🗣️ <span data-voice-name></span></button></div>
       <div class="setting"><span>Speed${vi('Tốc độ đọc')}</span>${seg('rate', [[0.75, 'Slow'], [0.9, 'Normal'], [1, 'Fast']])}</div>
       <div class="setting"><span>Show what the app heard${vi('Nhận diện chữ (không bắt buộc). Auto: bật trên máy tính, tắt trên điện thoại')}</span>${seg('transcribe', [['auto', 'Auto'], ['on', 'On'], ['off', 'Off']])}</div>
       <div class="setting"><span>Vietnamese help${vi('Hiện phần giải thích tiếng Việt')}</span>${seg('showVi', [[true, 'On'], [false, 'Off']])}</div>
       <div class="setting"><span>Focus${vi('Trọng tâm')}</span>${seg('focus', [['daily', 'Daily life'], ['work', 'Work']]).replace(`data-val="${state.profile.focus}" class=""`, `data-val="${state.profile.focus}" class="on"`)}</div>
     </div>
-    <p class="center" style="margin-top:18px"><button class="btn sm plain" data-test>🔊 Test the voice</button> <button class="btn sm plain" data-reset>Reset all progress</button></p>
+    <p class="center" style="margin-top:18px"><button class="btn sm plain" data-reset>Reset all progress</button></p>
     <p class="center small muted">Recordings and progress are stored only in this browser.</p>`;
   $$('[data-set]', root).forEach((b) => b.addEventListener('click', () => {
     const { set, val } = b.dataset;
-    if (set === 'accent' || set === 'focus') { state.profile[set] = val; if (set === 'focus') state.today = null; } else s[set] = set === 'rate' ? Number(val) : set === 'showVi' ? val === 'true' : val;
+    if (set === 'focus') { state.profile.focus = val; state.today = null; } else s[set] = set === 'rate' ? Number(val) : set === 'showVi' ? val === 'true' : val;
     app.save(); app.go('#/me');
   }));
-  $('[data-test]', root).addEventListener('click', () => app.say('Hello! This is your model voice. Three, please.'));
   $('[data-reset]', root).addEventListener('click', async () => {
     if (!confirm('Delete all progress and recordings on this device?')) return;
     reset(); await clearAudio(); location.hash = ''; location.reload();
