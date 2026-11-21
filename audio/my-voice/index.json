@@ -1,11 +1,32 @@
 {
-  "id": "flower-1",
+  "id": "flower-2",
   "name": "My voice",
   "sample": "sample.mp3",
   "lines": [
-    { "t": "This is a flower.", "vi": "Đây là một bông hoa.", "file": "this-is-a-flower.mp3" },
-    { "t": "Okay. So, let's look at the board.", "vi": "Được rồi. Giờ chúng ta cùng nhìn lên bảng.", "file": "lets-look-at-the-board.mp3" },
-    { "t": "Okay, we use this to talk about one noun, a flower, that is close.", "vi": "Được rồi, ta dùng \"this\" để nói về một danh từ, một bông hoa, ở gần.", "file": "we-use-this.mp3" },
-    { "t": "Okay, this is a flower. It's not far. It's close.", "vi": "Được rồi, đây là một bông hoa. Nó không ở xa. Nó ở gần.", "file": "not-far-its-close.mp3" }
+    {
+      "t": "This is a flower.",
+      "vi": "Đây là một bông hoa.",
+      "file": "this-is-a-flower.mp3"
+    },
+    {
+      "t": "Okay. So, let's look at the board.",
+      "vi": "Được rồi. Giờ chúng ta cùng nhìn lên bảng.",
+      "file": "lets-look-at-the-board.mp3"
+    },
+    {
+      "t": "Okay, we use this to talk about one noun, a flower, that is close.",
+      "vi": "Được rồi, ta dùng \"this\" để nói về một danh từ, một bông hoa, ở gần.",
+      "file": "we-use-this.mp3"
+    },
+    {
+      "t": "Okay, this is a flower. It's not far. It's close.",
+      "vi": "Được rồi, đây là một bông hoa. Nó không ở xa. Nó ở gần.",
+      "file": "not-far-its-close.mp3"
+    },
+    {
+      "t": "It's not far. It's close.",
+      "vi": "Nó không ở xa. Nó ở gần.",
+      "file": "its-not-far.mp3"
+    }
   ]
 }
