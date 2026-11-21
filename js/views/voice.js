@@ -7,7 +7,7 @@ import { saveAudio, loadAudio, deleteAudio } from '../audiodb.js';
 import { playAudio } from '../recorder.js';
 import { speakBox } from './speakbox.js';
 import { QUIET } from './line.js';
-import { $, $$, esc, vi, topBar, fmtDate } from '../ui.js';
+import { $, $$, esc, vi, topBar, fmtDate, toast } from '../ui.js';
 
 export default function voice(root, app, [mode]) {
   const { state } = app;
@@ -41,7 +41,9 @@ export default function voice(root, app, [mode]) {
         out.innerHTML = '<div class="row center"><button class="btn sm ghost" data-now>▶ My voice</button></div>';
         foot.innerHTML = '<button class="btn" data-keep>Save this recording</button>';
         $('[data-keep]', root).addEventListener('click', async () => {
-          v.first = { day: dayKey(), audio: await saveAudio(take.blob) };
+          const audio = await saveAudio(take.blob);
+          if (!audio) { toast('This browser could not save the recording, so there is nothing to compare later.'); return; }
+          v.first = { day: dayKey(), audio };
           markDone(state, 'voice'); app.save(); app.go('#/voice');
         });
       } else {
@@ -54,8 +56,10 @@ export default function voice(root, app, [mode]) {
           const old = v.first.audio;
           v.history.unshift({ line: line.t, from: v.first.day, to: dayKey(), answer: b.dataset.ans });
           // "Yes" moves on to a new line; otherwise today's recording becomes the one to beat next week.
-          if (b.dataset.ans === 'yes') { v.line++; v.first = null; } else v.first = { day: dayKey(), audio: await saveAudio(take.blob) };
-          deleteAudio(old);
+          // If today's recording cannot be saved, the old one stays as the baseline.
+          const audio = b.dataset.ans === 'yes' ? null : await saveAudio(take.blob);
+          if (b.dataset.ans === 'yes') { v.line++; v.first = null; } else if (audio) v.first = { day: dayKey(), audio };
+          if (v.first?.audio !== old) deleteAudio(old);
           markDone(state, 'voice'); app.save(); app.go('#/me');
         }));
       }
