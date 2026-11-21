@@ -115,6 +115,8 @@ test("today's plan has three tasks and tracks completion", () => {
   assert.deepEqual(tasks.map((t) => t.kind), ['talk', 'drill', 'voice']);
   markDone(st, 'talk', '2026-01-01');
   assert.equal(todayTasks(st, '2026-01-01')[0].done, true);
+  st.today.tasks[0].id = 'delivery'; // a conversation id that an earlier version used
+  assert.match(todayTasks(st, '2026-01-01')[0].href, /^#\/talk\/(?!delivery$)[\w-]+$/);
   assert.equal(finishLesson(st, tasks[1].id, [100, 50, null], '2026-01-01'), 75);
   assert.equal(shadowSet('2026-01-01').length, 5);
 });

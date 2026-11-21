@@ -1,5 +1,6 @@
 // Today's plan: three short tasks, reached from the single "Practice today" button.
-import { LESSONS } from './content/lessons.js';
+import { LESSONS, lessonById } from './content/lessons.js';
+import { scenarioById } from './content/scenarios.js';
 import { dayKey, dayNumber } from './days.js';
 import { dueCards, voiceStatus, doneToday } from './store.js';
 import { todayScenario } from './dialogue.js';
@@ -41,7 +42,8 @@ export function buildTasks(state, day = dayKey()) {
 
 /** Today's tasks, fixed once generated for the day so the list does not shift while the learner works. */
 export function todayTasks(state, day = dayKey()) {
-  if (state.today?.day !== day) state.today = { day, tasks: buildTasks(state, day) };
+  const gone = (t) => (t.kind === 'talk' && !scenarioById(t.id)) || (t.kind === 'drill' && !lessonById(t.id)); // renamed since the list was made
+  if (state.today?.day !== day || state.today.tasks.some(gone)) state.today = { day, tasks: buildTasks(state, day) };
   return state.today.tasks.map((t) => {
     const info = INFO[t.kind];
     return { ...t, icon: info.icon, en: info.en, vi: info.vi, min: info.min, href: info.href(t.id), done: doneToday(state, t.kind, day) };
