@@ -1,0 +1,82 @@
+// Original vocabulary deck. w = word, ipa, s = stress guide, pos = part of speech, vi = Vietnamese meaning,
+// ex = example sentence, exVi = its translation.
+export const VOCAB_CATS = [
+  { id: 'daily', icon: '🏠', en: 'Daily life', vi: 'Đời sống' },
+  { id: 'work', icon: '💼', en: 'Work', vi: 'Công việc' },
+  { id: 'travel', icon: '✈️', en: 'Travel', vi: 'Du lịch' },
+  { id: 'food', icon: '🍜', en: 'Food', vi: 'Ăn uống' },
+  { id: 'health', icon: '🩺', en: 'Health', vi: 'Sức khỏe' },
+  { id: 'feelings', icon: '💛', en: 'Feelings & opinions', vi: 'Cảm xúc & ý kiến' },
+];
+
+const v = (cat, w, ipa, s, pos, vi, ex, exVi) => ({ cat, w, ipa, s, pos, vi, ex, exVi });
+
+export const VOCAB = [
+  v('daily', 'schedule', '/ˈskedʒuːl/', 'SCHED·ule', 'n', 'lịch trình', 'My schedule is full this week.', 'Tuần này lịch của tôi kín hết rồi.'),
+  v('daily', 'comfortable', '/ˈkʌmftəbl/', 'COMF·ta·ble', 'adj', 'thoải mái', 'These shoes are really comfortable.', 'Đôi giày này rất thoải mái.'),
+  v('daily', 'neighbor', '/ˈneɪbər/', 'NEIGH·bor', 'n', 'hàng xóm', 'Our neighbor waters the plants for us.', 'Hàng xóm tưới cây giúp chúng tôi.'),
+  v('daily', 'borrow', '/ˈbɑːroʊ/', 'BOR·row', 'v', 'mượn', 'Can I borrow your charger for a minute?', 'Tôi mượn sạc của bạn một lát được không?'),
+  v('daily', 'remind', '/rɪˈmaɪnd/', 're·MIND', 'v', 'nhắc nhở', 'Please remind me to call my mom.', 'Nhớ nhắc tôi gọi cho mẹ nhé.'),
+  v('daily', 'crowded', '/ˈkraʊdɪd/', 'CROWD·ed', 'adj', 'đông đúc', 'The bus is crowded in the morning.', 'Xe buýt rất đông vào buổi sáng.'),
+  v('daily', 'convenient', '/kənˈviːniənt/', 'con·VEN·ient', 'adj', 'tiện lợi', 'Living near the market is convenient.', 'Sống gần chợ thật tiện.'),
+  v('daily', 'habit', '/ˈhæbɪt/', 'HAB·it', 'n', 'thói quen', 'Reading before bed is a good habit.', 'Đọc sách trước khi ngủ là thói quen tốt.'),
+  v('daily', 'chore', '/tʃɔːr/', 'CHORE', 'n', 'việc nhà', 'Washing the dishes is my least favorite chore.', 'Rửa bát là việc nhà tôi ít thích nhất.'),
+  v('daily', 'relax', '/rɪˈlæks/', 're·LAX', 'v', 'thư giãn', 'I relax by listening to music.', 'Tôi thư giãn bằng cách nghe nhạc.'),
+
+  v('work', 'deadline', '/ˈdedlaɪn/', 'DEAD·line', 'n', 'hạn chót', 'The deadline for the report is Friday.', 'Hạn chót nộp báo cáo là thứ Sáu.'),
+  v('work', 'colleague', '/ˈkɑːliːɡ/', 'COL·league', 'n', 'đồng nghiệp', 'My colleague helped me with the slides.', 'Đồng nghiệp đã giúp tôi làm slide.'),
+  v('work', 'experience', '/ɪkˈspɪriəns/', 'ex·PE·ri·ence', 'n', 'kinh nghiệm', 'I have two years of experience in sales.', 'Tôi có hai năm kinh nghiệm bán hàng.'),
+  v('work', 'responsible', '/rɪˈspɑːnsəbl/', 're·SPON·si·ble', 'adj', 'chịu trách nhiệm', 'I am responsible for customer support.', 'Tôi phụ trách chăm sóc khách hàng.'),
+  v('work', 'improve', '/ɪmˈpruːv/', 'im·PROVE', 'v', 'cải thiện', 'I want to improve my speaking skills.', 'Tôi muốn cải thiện kỹ năng nói.'),
+  v('work', 'suggest', '/səˈdʒest/', 'sug·GEST', 'v', 'đề xuất', 'I suggest we start with a short meeting.', 'Tôi đề xuất bắt đầu bằng một cuộc họp ngắn.'),
+  v('work', 'salary', '/ˈsæləri/', 'SAL·a·ry', 'n', 'lương', 'The salary is paid at the end of the month.', 'Lương được trả vào cuối tháng.'),
+  v('work', 'interview', '/ˈɪntərvjuː/', 'IN·ter·view', 'n', 'buổi phỏng vấn', 'I have a job interview tomorrow morning.', 'Sáng mai tôi có buổi phỏng vấn xin việc.'),
+  v('work', 'confident', '/ˈkɑːnfɪdənt/', 'CON·fi·dent', 'adj', 'tự tin', 'She sounds confident when she presents.', 'Cô ấy nghe rất tự tin khi thuyết trình.'),
+  v('work', 'achieve', '/əˈtʃiːv/', 'a·CHIEVE', 'v', 'đạt được', 'We achieved our goal last month.', 'Tháng trước chúng tôi đã đạt mục tiêu.'),
+
+  v('travel', 'luggage', '/ˈlʌɡɪdʒ/', 'LUG·gage', 'n', 'hành lý', 'Where can I pick up my luggage?', 'Tôi lấy hành lý ở đâu?'),
+  v('travel', 'reservation', '/ˌrezərˈveɪʃn/', 'res·er·VA·tion', 'n', 'đặt chỗ', 'I have a reservation for two nights.', 'Tôi đã đặt phòng hai đêm.'),
+  v('travel', 'departure', '/dɪˈpɑːrtʃər/', 'de·PAR·ture', 'n', 'giờ khởi hành', 'The departure time has changed.', 'Giờ khởi hành đã thay đổi.'),
+  v('travel', 'souvenir', '/ˌsuːvəˈnɪr/', 'sou·ve·NIR', 'n', 'quà lưu niệm', 'I bought a souvenir for my sister.', 'Tôi mua quà lưu niệm cho em gái.'),
+  v('travel', 'direction', '/dəˈrekʃn/', 'di·REC·tion', 'n', 'hướng, chỉ đường', 'Could you give me directions to the station?', 'Bạn chỉ đường giúp tôi tới nhà ga được không?'),
+  v('travel', 'passenger', '/ˈpæsɪndʒər/', 'PAS·sen·ger', 'n', 'hành khách', 'All passengers must show their tickets.', 'Tất cả hành khách phải xuất trình vé.'),
+  v('travel', 'currency', '/ˈkɜːrənsi/', 'CUR·ren·cy', 'n', 'tiền tệ', 'Where can I exchange currency?', 'Tôi đổi tiền ở đâu?'),
+  v('travel', 'delay', '/dɪˈleɪ/', 'de·LAY', 'n', 'sự chậm trễ', 'There is a two-hour delay because of the rain.', 'Chuyến đi bị trễ hai tiếng vì mưa.'),
+  v('travel', 'explore', '/ɪkˈsplɔːr/', 'ex·PLORE', 'v', 'khám phá', 'We explored the old town on foot.', 'Chúng tôi đi bộ khám phá phố cổ.'),
+  v('travel', 'receipt', '/rɪˈsiːt/', 're·CEIPT', 'n', 'hóa đơn, biên lai', 'Could I have a receipt, please?', 'Cho tôi xin hóa đơn được không?'),
+
+  v('food', 'recipe', '/ˈresəpi/', 'REC·i·pe', 'n', 'công thức nấu ăn', 'This is my grandmother’s recipe.', 'Đây là công thức của bà tôi.'),
+  v('food', 'vegetable', '/ˈvedʒtəbl/', 'VEGE·ta·ble', 'n', 'rau củ', 'I eat fresh vegetables every day.', 'Tôi ăn rau tươi mỗi ngày.'),
+  v('food', 'delicious', '/dɪˈlɪʃəs/', 'de·LI·cious', 'adj', 'ngon', 'The noodle soup was delicious.', 'Món phở rất ngon.'),
+  v('food', 'spicy', '/ˈspaɪsi/', 'SPI·cy', 'adj', 'cay', 'Is this dish very spicy?', 'Món này có cay lắm không?'),
+  v('food', 'dessert', '/dɪˈzɜːrt/', 'des·SERT', 'n', 'món tráng miệng', 'Would you like some dessert?', 'Bạn có muốn dùng tráng miệng không?'),
+  v('food', 'ingredient', '/ɪnˈɡriːdiənt/', 'in·GRE·di·ent', 'n', 'nguyên liệu', 'Fish sauce is the main ingredient.', 'Nước mắm là nguyên liệu chính.'),
+  v('food', 'order', '/ˈɔːrdər/', 'OR·der', 'v', 'gọi món', 'Are you ready to order?', 'Bạn sẵn sàng gọi món chưa?'),
+  v('food', 'allergic', '/əˈlɜːrdʒɪk/', 'al·LER·gic', 'adj', 'bị dị ứng', 'I am allergic to peanuts.', 'Tôi bị dị ứng đậu phộng.'),
+  v('food', 'flavor', '/ˈfleɪvər/', 'FLA·vor', 'n', 'hương vị', 'Which flavor do you want, mango or coconut?', 'Bạn muốn vị nào, xoài hay dừa?'),
+  v('food', 'bill', '/bɪl/', 'BILL', 'n', 'hóa đơn thanh toán', 'Could we have the bill, please?', 'Cho chúng tôi xin hóa đơn.'),
+
+  v('health', 'headache', '/ˈhedeɪk/', 'HEAD·ache', 'n', 'đau đầu', 'I have had a headache since this morning.', 'Tôi bị đau đầu từ sáng.'),
+  v('health', 'medicine', '/ˈmedɪsn/', 'MED·i·cine', 'n', 'thuốc', 'Take this medicine after meals.', 'Uống thuốc này sau bữa ăn.'),
+  v('health', 'exercise', '/ˈeksərsaɪz/', 'EX·er·cise', 'n', 'bài tập, tập thể dục', 'Regular exercise helps you sleep better.', 'Tập thể dục đều giúp bạn ngủ ngon hơn.'),
+  v('health', 'appointment', '/əˈpɔɪntmənt/', 'ap·POINT·ment', 'n', 'cuộc hẹn', 'I would like to make an appointment with the doctor.', 'Tôi muốn đặt lịch hẹn với bác sĩ.'),
+  v('health', 'breathe', '/briːð/', 'BREATHE', 'v', 'thở', 'Breathe in slowly and relax your shoulders.', 'Hít vào chậm rãi và thả lỏng vai.'),
+  v('health', 'healthy', '/ˈhelθi/', 'HEAL·thy', 'adj', 'khỏe mạnh, lành mạnh', 'She cooks healthy meals at home.', 'Cô ấy nấu những bữa ăn lành mạnh ở nhà.'),
+  v('health', 'stomach', '/ˈstʌmək/', 'STOM·ach', 'n', 'dạ dày, bụng', 'My stomach hurts after lunch.', 'Tôi bị đau bụng sau bữa trưa.'),
+  v('health', 'cough', '/kɔːf/', 'COUGH', 'n', 'cơn ho', 'This cough keeps me awake at night.', 'Cơn ho làm tôi mất ngủ.'),
+  v('health', 'temperature', '/ˈtemprətʃər/', 'TEM·pera·ture', 'n', 'nhiệt độ, thân nhiệt', 'The nurse checked my temperature.', 'Y tá đo nhiệt độ cho tôi.'),
+  v('health', 'recover', '/rɪˈkʌvər/', 're·COV·er', 'v', 'hồi phục', 'He recovered quickly after the operation.', 'Anh ấy hồi phục nhanh sau ca mổ.'),
+
+  v('feelings', 'excited', '/ɪkˈsaɪtɪd/', 'ex·CIT·ed', 'adj', 'hào hứng', 'I am excited about the trip to Da Nang.', 'Tôi rất hào hứng với chuyến đi Đà Nẵng.'),
+  v('feelings', 'nervous', '/ˈnɜːrvəs/', 'NER·vous', 'adj', 'lo lắng, hồi hộp', 'I always feel nervous before a presentation.', 'Tôi luôn hồi hộp trước khi thuyết trình.'),
+  v('feelings', 'grateful', '/ˈɡreɪtfl/', 'GRATE·ful', 'adj', 'biết ơn', 'I am grateful for your help.', 'Tôi rất biết ơn sự giúp đỡ của bạn.'),
+  v('feelings', 'disappointed', '/ˌdɪsəˈpɔɪntɪd/', 'dis·ap·POINT·ed', 'adj', 'thất vọng', 'We were disappointed with the service.', 'Chúng tôi thất vọng về dịch vụ.'),
+  v('feelings', 'proud', '/praʊd/', 'PROUD', 'adj', 'tự hào', 'My parents are proud of me.', 'Bố mẹ tự hào về tôi.'),
+  v('feelings', 'worried', '/ˈwɜːrid/', 'WOR·ried', 'adj', 'lo âu', 'She is worried about the exam results.', 'Cô ấy lo về kết quả thi.'),
+  v('feelings', 'opinion', '/əˈpɪnjən/', 'o·PIN·ion', 'n', 'ý kiến', 'In my opinion, this plan is better.', 'Theo ý tôi, kế hoạch này tốt hơn.'),
+  v('feelings', 'agree', '/əˈɡriː/', 'a·GREE', 'v', 'đồng ý', 'I agree with most of your ideas.', 'Tôi đồng ý với hầu hết ý kiến của bạn.'),
+  v('feelings', 'prefer', '/prɪˈfɜːr/', 'pre·FER', 'v', 'thích hơn', 'I prefer tea to coffee in the evening.', 'Buổi tối tôi thích trà hơn cà phê.'),
+  v('feelings', 'honest', '/ˈɑːnɪst/', 'HON·est', 'adj', 'trung thực', 'To be honest, I did not enjoy the movie.', 'Thành thật mà nói, tôi không thích bộ phim đó.'),
+];
+
+export const wordByText = (w) => VOCAB.find((x) => x.w === w);

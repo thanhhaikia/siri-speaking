@@ -1,0 +1,23 @@
+{
+  "name": "siri-speaking-android",
+  "version": "1.0.0",
+  "description": "Android wrapper (Capacitor) for the Siri-Speaking web app. The web app itself lives one folder up and has no dependencies.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "web": "node build-web.mjs",
+    "sync": "node build-web.mjs && cap sync android",
+    "apk": "node build-web.mjs && cap sync android && cd android && ./gradlew assembleRelease"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor-community/speech-recognition": "6.0.1",
+    "@capacitor-community/text-to-speech": "4.1.1",
+    "@capacitor/android": "6.2.3",
+    "@capacitor/app": "6.0.3",
+    "@capacitor/core": "6.2.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "6.2.3"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "appId": "com.thanhhaikia.sirispeaking",
+  "appName": "Siri-Speaking",
+  "webDir": "www",
+  "android": { "allowMixedContent": false }
+}
