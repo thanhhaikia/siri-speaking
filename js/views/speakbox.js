@@ -1,7 +1,7 @@
 // The record button used everywhere. Recording (MediaRecorder) is the primary input; transcription
 // (SpeechRecognition) runs alongside only when enabled, and a typed answer covers "no microphone".
 import { startRecording, tooQuiet, stopAudio } from '../recorder.js';
-import { listen, srError, stopSpeaking } from '../speech.js';
+import { listen, srError, stopSpeaking, MIC_BUSY } from '../speech.js';
 import { $, $$, esc, vi } from '../ui.js';
 
 const MIC = '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
@@ -87,7 +87,8 @@ export function speakBox(host, app, { maxSec = 12, autoStop = true, onStart, onT
     if (!alive) return;
     const alternatives = res?.ok?.alternatives?.length ? res.ok.alternatives : null;
     const quiet = !alternatives && (!audio.blob || tooQuiet(audio.stats));
-    const note = res?.err && res.err.message !== 'timeout' ? srError(res.err) : null;
+    const micTaken = audio.blob && ['audio-capture', 'not-allowed'].includes(res?.err?.message);
+    const note = res?.err && res.err.message !== 'timeout' ? (micTaken ? MIC_BUSY : srError(res.err)) : null;
     phase = 'idle'; show();
     interim.textContent = '';
     onResult({ ...audio, sec, quiet, alternatives, typed: false, note, failed: !!res?.err });

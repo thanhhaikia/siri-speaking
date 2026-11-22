@@ -134,4 +134,6 @@ export const SR_ERRORS = {
   unsupported: { en: 'This browser has no speech recognition. Use Chrome, Edge or Safari, or type what you said.', vi: 'Trình duyệt này không hỗ trợ nhận diện giọng nói. Hãy dùng Chrome, Edge hoặc Safari, hoặc gõ câu bạn nói.' },
   'language-not-supported': { en: 'The browser does not support the selected recognition language.', vi: 'Trình duyệt không hỗ trợ ngôn ngữ nhận diện đã chọn.' },
 };
+/** The recorder got the microphone and the speech service did not (some phones give it to one at a time). */
+export const MIC_BUSY = { en: 'The browser could not use the microphone for word matching while it was recording.', vi: 'Trình duyệt không dùng được micro để so khớp từ trong lúc đang ghi âm.' };
 export const srError = (e) => SR_ERRORS[e?.message] || { en: 'Speech recognition failed. Please try again.', vi: 'Nhận diện giọng nói bị lỗi. Hãy thử lại.' };
