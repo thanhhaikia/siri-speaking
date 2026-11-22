@@ -31,6 +31,18 @@ Any static file server works too, for example `python3 -m http.server 8080`. The
 - A recording that is too quiet gets no result, only a request to try again.
 - No microphone at all: type the answer, or tap Skip/Next.
 
+## Android app
+
+`mobile/` wraps this same web app in an Android app with Capacitor 6. It copies the site into the app, so it works offline, and it uses Android's own text-to-speech and speech recognition for the coach voice and word matching.
+
+```bash
+cd mobile
+npm install
+npm run apk      # needs JDK 17 and the Android SDK (API 34)
+```
+
+The APK is written to `mobile/android/app/build/outputs/apk/release/`. It is signed only if `mobile/android/keystore.properties` exists (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`); that file and the keystore are never committed. Without it, run `./gradlew assembleDebug` in `mobile/android` for a debug APK.
+
 ## Layout
 
 ```
@@ -49,4 +61,5 @@ js/freetalk.js       free-talk topics and the single practice suggestion
 js/content/          lessons, scenarios, phrases, tips, voice-check lines (all original)
 js/views/            one file per screen
 tests/               unit tests
+mobile/              Android wrapper (Capacitor); not needed to run the website
 ```
