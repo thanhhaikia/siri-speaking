@@ -16,9 +16,10 @@
     constructor(text = '') { this.text = text; this.lang = ''; this.rate = 1; this.pitch = 1; this.volume = 1; this.voice = null; }
   }
   class Synth extends EventTarget {
-    #voices = []; #current = null;
+    #voices = []; #current = null; #failed = false; #loading = false;
     constructor() { super(); this.speaking = false; this.pending = false; this.paused = false; this.load(); }
     async load() {
+      this.#loading = true;
       try {
         // `index` is the plugin's own number for the voice. Phones give many voices the same name, and the
         // app remembers a voice by name, so repeats are numbered: "English United States 2".
@@ -31,10 +32,13 @@
           const base = v.name || v.voiceURI, n = (seen[base] = (seen[base] || 0) + 1);
           return { ...v, name: n > 1 ? `${base} ${n}` : base };
         });
-      } catch { this.#voices = []; }
-      this.dispatchEvent(new Event('voiceschanged'));
+        this.#failed = false;
+      } catch { this.#failed = true; }
+      this.#loading = false;
+      if (!this.#failed) this.dispatchEvent(new Event('voiceschanged'));
     }
-    getVoices() { return this.#voices; }
+    // The first read can fail while Android's speech engine is still starting, so a later read asks again.
+    getVoices() { if (this.#failed && !this.#loading) this.load(); return this.#voices; }
     speak(u) {
       const mine = (this.#current = {});
       const done = (ok) => { if (this.#current === mine) { this.#current = null; this.speaking = false; } call(ok ? u.onend : u.onerror); };
