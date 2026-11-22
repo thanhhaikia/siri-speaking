@@ -23,9 +23,11 @@
         // `index` is the plugin's own number for the voice. Phones give many voices the same name, and the
         // app remembers a voice by name, so repeats are numbered: "English United States 2".
         const all = (await TTS.getSupportedVoices()).voices.map((v, index) => ({ ...v, index, lang: (v.lang || '').replace('_', '-') }));
-        const offline = all.filter((v) => v.localService);
+        // The app only offers English coach voices; among those, prefer the ones that work offline.
+        const english = all.filter((v) => /^en/i.test(v.lang));
+        const offline = english.filter((v) => v.localService);
         const seen = {};
-        this.#voices = (offline.length ? offline : all).map((v) => {
+        this.#voices = (offline.length ? offline : english).map((v) => {
           const base = v.name || v.voiceURI, n = (seen[base] = (seen[base] || 0) + 1);
           return { ...v, name: n > 1 ? `${base} ${n}` : base };
         });
